@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Wish Grid roadmap: every node's status, branch and blocker.">
+<meta name="robots" content="noindex, nofollow">
+<title>Wish Grid Tech Tree</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #E9E6DE;
+    --surface: #F6F4EE;
+    --surface-2: #EEEBE3;
+    --ink: #1E1C19;
+    --ink-2: #5C5850;
+    --ink-3: #8A857B;
+    --rule: #D2CDC1;
+    --rule-2: #C2BCAE;
+    --gold: #8F6F17;
+    --gold-fill: #F2C94C;
+    --gold-soft: #F7E6A8;
+    --s-live: #008300;
+    --s-merged: #2a78d6;
+    --s-branch: #1baf7a;
+    --s-active: #eb6834;
+    --s-paused: #b18bce;
+    --s-designed: #4a3aa7;
+    --s-open: #8A857B;
+    --s-blocked: #e34948;
+    --s-out: #B9B4A8;
+    /* Burn-up: finished work is the gold accent, total scope a grey that full-colour
+       and colour-blind readers can both tell from it (OKLab distance 16.8 light,
+       30.9 dark). This grey is 2.4:1 on the light surface, so both lines carry end
+       labels and the figures have a table view. */
+    --burn-scope: #A39E93;
+    --shadow: 0 1px 2px rgba(30, 28, 25, .08), 0 8px 24px rgba(30, 28, 25, .10);
+    --display: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #15171B;
+      --surface: #1F2127;
+      --surface-2: #272A31;
+      --ink: #ECE8DF;
+      --ink-2: #ABA69C;
+      --ink-3: #7B776F;
+      --rule: #33363E;
+      --rule-2: #434750;
+      --gold: #F2C94C;
+      --gold-fill: #F2C94C;
+      --gold-soft: #4A3F1A;
+      --s-live: #2e9e2e;
+      --s-merged: #3987e5;
+      --s-branch: #199e70;
+      --s-active: #d95926;
+      --s-paused: #8062a0;
+      --s-designed: #9085e9;
+      --s-open: #8A8A86;
+      --s-blocked: #e66767;
+      --s-out: #4B4E56;
+      --burn-scope: #7B776F;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .45);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #15171B;
+    --surface: #1F2127;
+    --surface-2: #272A31;
+    --ink: #ECE8DF;
+    --ink-2: #ABA69C;
+    --ink-3: #7B776F;
+    --rule: #33363E;
+    --rule-2: #434750;
+    --gold: #F2C94C;
+    --gold-fill: #F2C94C;
+    --gold-soft: #4A3F1A;
+    --s-live: #2e9e2e;
+    --s-merged: #3987e5;
+    --s-branch: #199e70;
+    --s-active: #d95926;
+    --s-paused: #8062a0;
+    --s-designed: #9085e9;
+    --s-open: #8A8A86;
+    --s-blocked: #e66767;
+    --s-out: #4B4E56;
+    --burn-scope: #7B776F;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .45);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.5 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--gold); }
+  button { font: inherit; color: inherit; }
+  code, .mono { font-family: var(--mono); font-size: .92em; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 500; margin: 0; text-wrap: balance; letter-spacing: -0.005em; }
+  h1 { font-size: 44px; line-height: 1.05; }
+  h2 { font-size: 26px; line-height: 1.15; }
+  h3 { font-size: 18px; line-height: 1.25; }
+  p { margin: 0; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+  .num { font-variant-numeric: tabular-nums; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  .page { max-width: 1440px; margin: 0 auto; padding: 36px 32px 80px; display: grid; gap: 44px; }
+  section > header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  section > header p { color: var(--ink-2); max-width: 64ch; }
+
+  /* ---- top ---- */
+  .masthead { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr); gap: 32px 48px; align-items: end; }
+  .masthead .thesis { font-family: var(--display); font-size: 20px; line-height: 1.35; color: var(--ink-2); max-width: 56ch; margin-top: 14px; font-style: italic; }
+  .masthead .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 18px; color: var(--ink-2); font-size: 13px; }
+  .masthead .meta b { color: var(--ink); font-weight: 500; }
+  .total { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 18px 20px 16px; display: grid; gap: 12px; }
+  .total .row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+  .total .big { font-family: var(--display); font-size: 56px; line-height: 1; font-weight: 500; color: var(--ink); }
+  .total .big small { font-size: 22px; color: var(--ink-3); margin-left: 2px; }
+  .total .cap { color: var(--ink-2); font-size: 13px; max-width: 30ch; text-align: right; }
+  .total .day { font-size: 12.5px; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 10px; }
+  .total .day b { color: var(--ink); font-weight: 500; }
+  .stack { display: flex; gap: 2px; height: 14px; border-radius: 3px; overflow: hidden; background: var(--surface-2); }
+  .stack i { display: block; height: 100%; min-width: 2px; }
+  .stack.thin { height: 6px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-2); }
+  .legend .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .legend b { color: var(--ink); font-weight: 500; }
+  .legend .g { color: var(--ink-3); margin-right: 3px; }
+
+  /* ---- update log ---- */
+  .updates { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .updates .head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--rule); background: var(--surface-2); }
+  .updates .head .eyebrow { margin: 0; }
+  .updates .head .n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+  .updates .empty { padding: 14px 16px; color: var(--ink-2); font-size: 13px; }
+  .update { border-bottom: 1px solid var(--rule); }
+  .update:last-child { border-bottom: 0; }
+  .update summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 16px; align-items: baseline; }
+  .update summary::-webkit-details-marker { display: none; }
+  .update summary:hover { background: color-mix(in oklab, var(--gold-fill) 6%, var(--surface)); }
+  .update .chev { grid-row: 1 / span 2; align-self: start; margin-top: 3px; width: 14px; height: 14px; color: var(--ink-3); transition: transform .15s; }
+  .update[open] .chev { transform: rotate(90deg); }
+  .update .who { font-size: 14px; color: var(--ink); }
+  .update .who b { font-weight: 500; }
+  .update .who .ago { color: var(--ink-2); }
+  .update .what { grid-column: 2; font-size: 13px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .update .what .sum { color: var(--ink); }
+  .update .refs { grid-column: 3; grid-row: 1 / span 2; text-align: right; font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); display: grid; gap: 2px; justify-items: end; white-space: nowrap; }
+  .update .refs a { color: var(--gold); text-decoration: none; }
+  .update .refs a:hover { text-decoration: underline; }
+  .update.latest summary { padding-top: 14px; padding-bottom: 14px; }
+  .update.latest .who { font-size: 15px; }
+  .update .body { padding: 4px 16px 14px 46px; display: grid; gap: 4px; }
+  .update .body .row { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; font-size: 13px; align-items: baseline; }
+  .update .body .row .k { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding-top: 2px; }
+  .update .body .row .t { color: var(--ink); font-weight: 500; }
+  .update .body .row .d { color: var(--ink-2); }
+  .update .body .row .d .from { text-decoration: line-through; color: var(--ink-3); }
+  .update .body .row .sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin: 0 5px 0 2px; vertical-align: 0; }
+  .update .body .meta-row { font-size: 12px; color: var(--ink-3); padding-top: 6px; border-top: 1px solid var(--rule); margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .update .body .meta-row a { color: var(--gold); }
+  .update .body .none { color: var(--ink-3); font-size: 13px; }
+  .update .more { padding: 10px 16px; font-size: 12.5px; color: var(--ink-2); border-top: 1px solid var(--rule); }
+  @media (max-width: 820px) {
+    .update summary { grid-template-columns: 18px minmax(0, 1fr); }
+    .update .refs { grid-column: 2; grid-row: 3; text-align: left; justify-items: start; white-space: normal; }
+    .update .body { padding-left: 16px; }
+  }
+
+  /* ---- burn-up ---- */
+  .burnup-card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px 12px; display: grid; gap: 10px; }
+  .burnup-keys { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 12.5px; color: var(--ink-2); }
+  .burnup-keys .key, .burnup-tip .key { display: inline-block; width: 16px; border-top: 2px solid; border-radius: 1px; margin-right: 7px; vertical-align: middle; }
+  .key.done { border-color: var(--gold); }
+  .key.scope { border-color: var(--burn-scope); }
+  .burnup-plot { position: relative; border-radius: 4px; touch-action: pan-y; }
+  .burnup-plot:focus-visible { outline-offset: 4px; }
+  .burnup-plot svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .burnup-plot .grid { stroke: var(--rule); stroke-width: 1; shape-rendering: crispEdges; }
+  .burnup-plot .tick { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .burnup-plot .line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .burnup-plot .line.done { stroke: var(--gold); }
+  .burnup-plot .line.scope { stroke: var(--burn-scope); }
+  .burnup-plot .wash { fill: var(--gold); opacity: .1; }
+  .burnup-plot .dot { stroke: var(--surface); stroke-width: 2; }
+  .burnup-plot .dot.done { fill: var(--gold); }
+  .burnup-plot .dot.scope { fill: var(--burn-scope); }
+  .burnup-plot .end { font-size: 12px; fill: var(--ink-2); }
+  .burnup-plot .end .v { fill: var(--ink); font-weight: 500; }
+  .burnup-plot .cross { stroke: var(--ink-3); stroke-width: 1; }
+  .burnup-tip { position: absolute; top: 0; pointer-events: none; background: var(--surface); border: 1px solid var(--rule-2); border-radius: 8px; box-shadow: var(--shadow); padding: 8px 10px; font-size: 12.5px; color: var(--ink-2); display: grid; gap: 3px; min-width: 176px; }
+  .burnup-tip[hidden] { display: none; }
+  .burnup-tip .when { color: var(--ink-3); font-size: 11.5px; }
+  .burnup-tip b { color: var(--ink); font-weight: 600; }
+  .burnup-table summary { cursor: pointer; font-size: 12.5px; color: var(--ink-2); width: max-content; }
+  .burnup-table .table-wrap { margin-top: 8px; max-height: 320px; overflow-y: auto; }
+  .burnup-table td, .burnup-table th { font-variant-numeric: tabular-nums; }
+  .burnup-table .num { text-align: right; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---- area tiles ---- */
+  .areas { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 14px 12px;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; min-width: 0; gap: 10px 12px; text-align: left; cursor: pointer;
+    transition: border-color .15s, transform .15s;
+  }
+  .tile:hover { border-color: var(--rule-2); }
+  .tile > * { min-width: 0; }
+  .tile.is-filter { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft); }
+  .tile.goal { border-color: var(--gold); background: color-mix(in oklab, var(--gold-fill) 10%, var(--surface)); }
+  .tile .code { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-3); }
+  .tile h3 { margin-top: 2px; }
+  .tile .mission { color: var(--ink-2); font-size: 12px; line-height: 1.4; margin-top: 4px; min-height: 2.8em; }
+  .tile .ring { grid-row: 1 / span 2; align-self: start; }
+  .tile .ring svg { display: block; width: 62px; height: 62px; }
+  .tile .ring text { font-family: var(--mono); font-size: 14px; font-weight: 500; fill: var(--ink); }
+  .tile .foot { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr); gap: 7px; }
+  .tile .counts { font-size: 12px; color: var(--ink-2); display: flex; justify-content: space-between; gap: 8px; }
+  .tile .counts b { color: var(--ink); font-weight: 500; }
+  .tile .next { font-size: 12px; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 7px; display: flex; gap: 6px; }
+  .tile .next .k { color: var(--ink-3); flex: none; }
+  .tile .next .t { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ---- controls ---- */
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .chip {
+    border: 1px solid var(--rule); background: var(--surface); border-radius: 999px; padding: 4px 10px 4px 8px; font-size: 12px;
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--ink-2);
+  }
+  .chip .sw { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .chip.off { opacity: .45; text-decoration: line-through; }
+  .chip b { color: var(--ink); font-weight: 500; }
+  .controls input[type=search] {
+    border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 13px; min-width: 220px;
+  }
+  .controls .spacer { flex: 1; }
+  .btn { border: 1px solid var(--rule); background: var(--surface); border-radius: 8px; padding: 6px 10px; font-size: 13px; cursor: pointer; color: var(--ink-2); }
+  .btn:hover { color: var(--ink); border-color: var(--rule-2); }
+  .filter-note { font-size: 12px; color: var(--ink-3); }
+
+  /* ---- tree ---- */
+  .tree-wrap { display: grid; grid-template-columns: 168px minmax(0, 1fr); border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); overflow: hidden; }
+  .lanes { border-right: 1px solid var(--rule); background: var(--surface-2); }
+  .lane-label { border-bottom: 1px solid var(--rule); padding: 10px 12px; display: flex; flex-direction: column; justify-content: center; gap: 2px; cursor: pointer; }
+  .lane-label:last-child { border-bottom: 0; }
+  .lane-label:hover { background: var(--surface); }
+  .lane-label .code { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-3); }
+  .lane-label .name { font-family: var(--display); font-size: 15px; line-height: 1.2; color: var(--ink); }
+  .lane-label .pct { font-family: var(--mono); font-size: 11px; color: var(--ink-2); }
+  .lane-label.goal .name { color: var(--gold); }
+  .lane-head { height: 30px; border-bottom: 1px solid var(--rule); display: flex; align-items: center; padding: 0 12px; font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .scroll { overflow-x: auto; overflow-y: hidden; }
+  .scroll svg { display: block; }
+
+  svg .lane-band { fill: var(--surface-2); }
+  svg .lane-band.alt { fill: var(--surface); }
+  svg .lane-rule { stroke: var(--rule); stroke-width: 1; }
+  svg .col-label { font-family: var(--mono); font-size: 10px; fill: var(--ink-3); letter-spacing: .06em; }
+  svg .edge { fill: none; stroke: var(--ink); stroke-opacity: .13; stroke-width: 1.25; }
+  svg .edge.up { stroke: var(--gold); stroke-opacity: .95; stroke-width: 2; }
+  svg .edge.down { stroke: var(--ink); stroke-opacity: .55; stroke-width: 1.75; }
+  svg .edge.dim { stroke-opacity: .04; }
+  svg .node { cursor: pointer; }
+  svg .node rect.box { fill: var(--surface); stroke-width: 1.25; }
+  svg .node.sel rect.box { stroke: var(--gold); stroke-width: 2.5; }
+  svg .node rect.stripe { }
+  svg .node text { fill: var(--ink); font-family: var(--sans); font-size: 12px; }
+  svg .node text.status { font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em; fill: var(--ink-2); }
+  svg .node text.glyph { font-size: 11px; }
+  svg .node text.title { font-weight: 500; }
+  svg .node.gate text.title { font-family: var(--display); font-size: 13.5px; font-weight: 600; }
+  svg .node.dim { opacity: .16; }
+  svg .node.out rect.box { stroke-dasharray: 3 3; }
+  svg .node.out text { fill: var(--ink-3); }
+  svg .node:focus { outline: none; }
+  svg .node:focus-visible rect.box { stroke: var(--gold); stroke-width: 2.5; }
+  @media (prefers-reduced-motion: no-preference) {
+    svg .node, svg .edge { transition: opacity .15s, stroke-opacity .15s; }
+  }
+
+  /* ---- now ---- */
+  .now { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: grid; gap: 10px; align-content: start; }
+  .panel h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .panel h3 .n { font-family: var(--mono); font-size: 12px; color: var(--ink-3); font-weight: 400; }
+  .panel p.lead { color: var(--ink-2); font-size: 12.5px; }
+  .page > *, section, .panel { min-width: 0; }
+  .panel { overflow-wrap: anywhere; }
+  .item { display: grid; grid-template-columns: 30px minmax(0, 1fr); min-width: 0; gap: 2px 10px; padding: 8px 0; border-top: 1px solid var(--rule); cursor: pointer; text-align: left; background: none; border-left: 0; border-right: 0; border-bottom: 0; }
+  .item:hover .t { color: var(--gold); }
+  .item .code { font-family: var(--mono); font-size: 11px; color: var(--ink-3); padding-top: 3px; letter-spacing: .04em; }
+  .item .t { font-weight: 500; }
+  .item .s { grid-column: 2; color: var(--ink-2); font-size: 12.5px; line-height: 1.4; }
+  .item .pill { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); margin-left: 8px; vertical-align: 1px; }
+  .item .pill .sw { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+  .group-h { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding-top: 10px; }
+
+  /* ---- tables ---- */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; background: var(--surface-2); }
+  tr:last-child td { border-bottom: 0; }
+
+  /* ---- reading ---- */
+  .reading { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; }
+  .reading .panel { gap: 8px; }
+  .status-table { display: grid; grid-template-columns: auto auto 1fr auto; gap: 6px 12px; font-size: 13px; align-items: baseline; }
+  .status-table .sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .status-table .l { font-weight: 500; }
+  .status-table .m { color: var(--ink-2); }
+  .status-table .p { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+  pre { background: var(--surface-2); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.55; margin: 0; }
+  ol { margin: 0; padding-left: 20px; color: var(--ink-2); display: grid; gap: 6px; }
+  ol b { color: var(--ink); font-weight: 500; }
+
+  /* ---- drawer ---- */
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 100vw); background: var(--surface); border-left: 1px solid var(--rule);
+    box-shadow: var(--shadow); padding: 22px 22px 32px; overflow-y: auto; display: grid; gap: 14px; align-content: start; z-index: 20;
+    transform: translateX(102%); visibility: hidden;
+  }
+  .drawer.open { transform: none; visibility: visible; }
+  @media (prefers-reduced-motion: no-preference) { .drawer { transition: transform .22s ease, visibility .22s; } }
+  .drawer .top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+  .drawer .close { border: 1px solid var(--rule); background: var(--surface-2); border-radius: 8px; width: 32px; height: 32px; cursor: pointer; font-size: 16px; line-height: 1; flex: none; }
+  .drawer h2 { font-size: 24px; }
+  .drawer .pill { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--rule); border-radius: 999px; padding: 3px 10px 3px 8px; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+  .drawer .pill .sw { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .drawer .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .drawer .summary { color: var(--ink); line-height: 1.55; font-size: 14px; }
+  .callout { border-left: 3px solid var(--rule-2); padding: 6px 12px; color: var(--ink-2); font-size: 13px; background: var(--surface-2); border-radius: 0 6px 6px 0; }
+  .callout.block { border-left-color: var(--s-blocked); }
+  .callout.session { border-left-color: var(--s-active); }
+  .callout b { color: var(--ink); font-weight: 500; }
+  .drawer h4 { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin: 6px 0 0; font-weight: 500; }
+  .linklist { display: grid; gap: 4px; }
+  .linklist button { text-align: left; border: 1px solid var(--rule); background: var(--surface-2); border-radius: 6px; padding: 6px 9px; cursor: pointer; display: grid; grid-template-columns: 14px 1fr; gap: 8px; align-items: center; font-size: 13px; }
+  .linklist button:hover { border-color: var(--gold); }
+  .linklist .g { font-size: 11px; }
+  .linklist .none { color: var(--ink-3); font-size: 13px; }
+  .evidence { display: grid; gap: 3px; font-family: var(--mono); font-size: 12px; color: var(--ink-2); word-break: break-all; }
+  .drawer .foot { color: var(--ink-3); font-size: 12px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .drawer .edit { font-size: 12px; color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: 12px; }
+
+  @media (max-width: 1100px) {
+    .areas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .now { grid-template-columns: 1fr; }
+    .reading { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 820px) {
+    .page { padding: 24px 16px 64px; gap: 32px; }
+    h1 { font-size: 34px; }
+    .masthead { grid-template-columns: 1fr; }
+    .areas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tree-wrap { grid-template-columns: 120px minmax(0, 1fr); }
+    .drawer { top: auto; left: 0; width: auto; max-height: 70vh; border-left: 0; border-top: 1px solid var(--rule); border-radius: 14px 14px 0 0; transform: translateY(102%); }
+  }
+  @media (max-width: 550px) {
+    .areas { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Wish Grid · roadmap</div>
+      <h1 style="margin-top:8px">Wish Grid Tech Tree</h1>
+      <p class="thesis">Every piece of work belongs to an area, and every area feeds the gates that lead to Version 1. This page is the map of what exists, what is on a branch, what is waiting on a decision, and how it all builds up to a Version 1 that is ready.</p>
+      <div class="meta" id="meta"></div>
+      <div class="meta" id="foundations" hidden></div>
+    </div>
+    <div class="total" aria-label="Overall completion">
+      <div class="row">
+        <div class="big"><span class="num" id="total-pct">0</span><small>%</small></div>
+        <p class="cap">Weighted completion across every lane except the gates. A reading aid, not a promise.</p>
+      </div>
+      <div class="stack" id="total-stack" role="img" aria-label="Nodes by status"></div>
+      <div class="legend" id="total-legend"></div>
+      <p class="day" id="total-day" hidden></p>
+    </div>
+  </header>
+
+  <section id="burnup-section" aria-labelledby="burnup-title" hidden>
+    <header>
+      <div>
+        <div class="eyebrow">Progress over time</div>
+        <h2 id="burnup-title">Finished work against total scope</h2>
+      </div>
+      <p>Every item counts by size: small 1 point, medium 2, large 3. Finished work counts the share its status earns, so a merged item gives 85 % of its points. The percentage above is finished points divided by total points, so it holds still whenever new work joins the roadmap as fast as work is finished.</p>
+    </header>
+    <div class="burnup-card">
+      <div class="burnup-keys"><span><i class="key done"></i>Finished</span><span><i class="key scope"></i>Total scope</span></div>
+      <div class="burnup-plot" id="burnup-plot" tabindex="0" role="group" aria-label="Burn-up chart. The arrow keys step through each change to the roadmap."></div>
+      <p class="sr-only" id="burnup-live" aria-live="polite"></p>
+      <details class="burnup-table">
+        <summary>Show the figures by day</summary>
+        <div class="table-wrap"><table><thead><tr><th>Day</th><th class="num">Total scope</th><th class="num">Finished</th><th class="num">Complete</th></tr></thead><tbody id="burnup-rows"></tbody></table></div>
+      </details>
+    </div>
+  </section>
+
+  <section id="updates-section" class="updates" aria-label="Update log">
+    <div class="head">
+      <div class="eyebrow">Updates</div>
+      <span class="n" id="updates-count"></span>
+    </div>
+    <div id="updates"></div>
+  </section>
+
+  <section id="areas-section">
+    <header>
+      <div>
+        <div class="eyebrow">Areas</div>
+        <h2>Where the strength is, and where the work is</h2>
+      </div>
+      <p>Each tile is one area: its completion ring, its nodes by status, and the next unbuilt thing in it. Click a tile to filter the tree to that lane.</p>
+    </header>
+    <div class="areas" id="areas"></div>
+  </section>
+
+  <section id="tree-section">
+    <header>
+      <div>
+        <div class="eyebrow">The tree</div>
+        <h2>From foundations to the goal</h2>
+      </div>
+      <p>Rows are areas. A node's column is how many layers of prerequisites sit beneath it, so the goal is at the far right. Hover or click a node to light its path: gold upstream, dark downstream.</p>
+    </header>
+    <div class="controls" id="controls"></div>
+    <div class="tree-wrap">
+      <div class="lanes" id="lanes"><div class="lane-head">Lane</div></div>
+      <div class="scroll" id="scroll"></div>
+    </div>
+  </section>
+
+  <section id="now-section">
+    <header>
+      <div>
+        <div class="eyebrow">Now</div>
+        <h2>Where to point the next session</h2>
+      </div>
+      <p>Derived from the graph: what is being worked, what only Ollie can unblock, and what could start today because everything beneath it exists.</p>
+    </header>
+    <div class="now">
+      <div class="panel" id="panel-active"></div>
+      <div class="panel" id="panel-paused"></div>
+      <div class="panel" id="panel-blocked"></div>
+      <div class="panel" id="panel-frontier"></div>
+    </div>
+  </section>
+
+  <section id="reading-section">
+    <header>
+      <div>
+        <div class="eyebrow">Reading this page</div>
+        <h2>Statuses, the formula, and how to update it</h2>
+      </div>
+    </header>
+    <div class="reading">
+      <div class="panel">
+        <h3>Status vocabulary</h3>
+        <div class="status-table" id="status-table"></div>
+        <p class="lead" style="margin-top:8px">Area completion is the weighted mean of its nodes' percentages, sizes S = 1, M = 2, L = 3, <em>out</em> nodes excluded. Colour never stands alone: every mark carries its glyph and word.</p>
+      </div>
+      <div class="panel">
+        <h3>The contract</h3>
+        <ol>
+          <li><b>Claim before you build.</b> <code>python3 tools/roadmap/claim.py &lt;node-id&gt; "what you are doing"</code> marks the node <em>active</em> with your branch and rebuilds the page. Hooks refuse edits to code on a branch with no claim.</li>
+          <li><b>Release when the evidence moves.</b> <code>claim.py &lt;node-id&gt; --release branch|merged|live --evidence &lt;path&gt;</code>. A merge is refused while a claim is still active; a push is refused when work changed but the graph did not.</li>
+          <li><b>Commit the graph and both built pages with the work.</b> Roadmap-only updates go straight to main with <code>tools/roadmap/push_roadmap_to_main.sh</code>. Installed Git hooks check pushed commits; Claude hooks add session checks. There is no hosted CI.</li>
+        </ol>
+        <pre>python3 tools/roadmap/claim.py --list ready
+python3 tools/roadmap/claim.py &lt;node-id&gt; "what you are doing"
+python3 tools/roadmap/claim.py &lt;node-id&gt; --release branch --evidence &lt;path&gt;
+python3 tools/roadmap/git_hooks.py install
+bash tools/roadmap/publish_pages.sh</pre>
+        <p class="lead">Move to <em>merged</em> after the actual merge, and <em>live</em> after deployment/device proof. The weighted percentage is not a release forecast. <a href="source.json">Published source commit</a>.</p>
+        <p class="lead" id="artifact-line"></p>
+        <p class="lead">The schematic that defines the areas and gates is <code>docs/roadmap/production-schematic.md</code>.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<aside class="drawer" id="drawer" aria-live="polite" aria-label="Node detail"></aside>
+
+<script type="application/json" id="tree-data">{"tree": {"meta": {"title": "Wish Grid Tech Tree", "asOf": "2026-10-15", "main": "929fd90", "schematic": "docs/roadmap/production-schematic.md", "note": "Status is evidence-led. Build order and interaction rows come from docs/planning/year-plan/delivery.md and interactions.json; the contract wins any disagreement.", "artifactUrl": "https://claude.ai/artifact/Rz5gmG8mGaMcjVG3SHputQ", "foundations": [{"label": "Design contract", "url": "https://github.com/OlliePage/wish-grid/blob/main/docs/planning/year-plan/contract.md", "note": "The binding specification every node is derived from (version 2 with Amendment 1)"}, {"label": "Signed-off design canvas", "url": "https://claude.ai/artifact/E69LoogCx93g3jVrPL2K4A", "note": "The approved boards, frozen into design/concepts/year-plan"}, {"label": "Build plan", "url": "https://github.com/OlliePage/wish-grid/blob/main/docs/planning/year-plan/delivery.md", "note": "Phases 0 to 9 and the interaction rows each delivers"}, {"label": "Interactions", "url": "https://github.com/OlliePage/wish-grid/blob/main/docs/planning/year-plan/interactions.md", "note": "YP-001 to YP-123, each mapped to one node"}], "pagesRepo": "OlliePage/p-0641a37d", "pagesUrl": "https://olliepage.github.io/p-0641a37d/"}, "statuses": [{"id": "live", "label": "Live", "glyph": "●", "progress": 1.0, "meaning": "On main and proven: app behaviour shown working on Ollie's device, tooling in daily use."}, {"id": "merged", "label": "Merged", "glyph": "◉", "progress": 0.85, "meaning": "On main with tests, so on TestFlight; not yet proven on a device."}, {"id": "branch", "label": "Branch", "glyph": "◆", "progress": 0.6, "meaning": "Built and verified on a branch that is not main."}, {"id": "active", "label": "Active", "glyph": "▶", "progress": 0.4, "meaning": "Being worked in a session now; partial."}, {"id": "paused", "label": "Paused", "glyph": "Ⅱ", "progress": 0.4, "meaning": "Partial work kept on a named branch with a written next step; no current session."}, {"id": "designed", "label": "Designed", "glyph": "◇", "progress": 0.15, "meaning": "Specified by the approved contract and frozen boards; no code."}, {"id": "open", "label": "Open", "glyph": "○", "progress": 0.0, "meaning": "A known gap with no approved design."}, {"id": "blocked", "label": "Blocked", "glyph": "■", "progress": 0.0, "meaning": "Waiting on a named decision or outside action."}, {"id": "out", "label": "Out", "glyph": "—", "progress": null, "meaning": "Deliberately out of scope for version 1."}], "areas": [{"id": "foundations", "code": "FO", "name": "Core & store", "mission": "WishGridCore: the year's arithmetic, the domain model and the local store."}, {"id": "spoken", "code": "SF", "name": "Step 1: Spoken for", "mission": "Stating what the year already holds (WG-S01)."}, {"id": "paint", "code": "PA", "name": "Step 2: Paint", "mission": "Making blocks and painting them onto the hour grid (WG-S02, WG-S03)."}, {"id": "refine", "code": "RF", "name": "Step 3: Refine", "mission": "Checking how each block behaves, one sentence each (WG-S04)."}, {"id": "engine", "code": "EN", "name": "Fitting engine", "mission": "Turning the painted year into dated sessions, deterministically."}, {"id": "fit", "code": "FT", "name": "Step 4: Fit & accept", "mission": "The year planner, month view, summary and accepting into the Year plan calendar (WG-S05 to WG-S07)."}, {"id": "exports", "code": "EX", "name": "Exports", "mission": "The calendar file and the printable PDF (WG-S08)."}, {"id": "iphone", "code": "IP", "name": "iPhone companion", "mission": "The year on the iPhone (WG-S10)."}, {"id": "app", "code": "AP", "name": "App shell & settings", "mission": "Launch, settings, feel and accessibility across every screen (WG-S09)."}, {"id": "sync", "code": "SY", "name": "Sync & privacy", "mission": "Private iCloud sync between devices and the privacy guarantees."}, {"id": "quality", "code": "QA", "name": "Quality & release", "mission": "Knowing it works and getting it onto devices: the gate, TestFlight, device checks, the audit, this map."}, {"id": "goal", "code": "GO", "name": "Version 1", "mission": "The gates and the goal only."}], "tiers": {"1": {"name": "Plan a year on the iPad", "gates": ["go-ships", "go-spoken", "go-paint", "go-refine", "go-fit", "go-accept"]}, "2": {"name": "Everywhere it should be", "gates": ["go-exports", "go-iphone"]}, "3": {"name": "Accepted", "gates": ["go-audit"]}}, "nodes": [{"id": "fo-project", "area": "foundations", "title": "Multiplatform project", "status": "merged", "size": "M", "summary": "XcodeGen project for iPad, Mac and iPhone with iOS, iPadOS and macOS 26 floors and no Watch target (OD-YP-8). The tracked Xcode project is regenerated from project.yml.", "depends": [], "evidence": ["project.yml", "WishGrid.xcodeproj", "https://github.com/OlliePage/wish-grid/pull/1"], "updated": "2026-10-15"}, {"id": "fo-bank-holidays", "area": "foundations", "title": "Bank holidays", "status": "merged", "size": "M", "summary": "England and Wales by rule plus the one-off table, with Scotland and Northern Ireland behind the region setting, including substitute days. Tested for 2026 to 2032 against published dates.", "depends": [], "evidence": ["Packages/WishGridCore/Sources/WishGridCore/Year/BankHolidays.swift", "Packages/WishGridCore/Tests/WishGridCoreTests/BankHolidayTests.swift"], "updated": "2026-10-15"}, {"id": "fo-year-geometry", "area": "foundations", "title": "Year geometry and Step 1 arithmetic", "status": "merged", "size": "M", "summary": "One square per hour, 120 columns, workdays, DAYOFF, free-time zones and the bands layout. Tests include the contract's worked example (2027: 228 workdays, 3,112 free hours) and the 2028 leap year.", "depends": ["fo-bank-holidays"], "evidence": ["Packages/WishGridCore/Sources/WishGridCore/Year", "Packages/WishGridCore/Tests/WishGridCoreTests/YearGeometryTests.swift", "Packages/WishGridCore/Tests/WishGridCoreTests/SpokenForTests.swift"], "updated": "2026-10-15"}, {"id": "fo-domain-model", "area": "foundations", "title": "Domain model with tolerant decoding", "status": "merged", "size": "M", "summary": "The contract's domain types in WishGridCore. An unknown enum value decodes to an explicit safe fallback instead of failing.", "depends": [], "evidence": ["Packages/WishGridCore/Sources/WishGridCore/Model", "Packages/WishGridCore/Tests/WishGridCoreTests/ModelTests.swift"], "updated": "2026-10-15"}, {"id": "fo-record-store", "area": "foundations", "title": "Local record store", "status": "merged", "size": "M", "summary": "SQLite store holding the six record kinds under canonical record keys, with round-trip tests that close and reopen the store, including a failed write.", "depends": ["fo-domain-model"], "evidence": ["Packages/WishGridCore/Sources/WishGridCore/Store", "Packages/WishGridCore/Tests/WishGridCoreTests/RecordStoreTests.swift"], "updated": "2026-10-15"}, {"id": "fo-store-write-path", "area": "foundations", "title": "Reader level and single write path", "status": "designed", "size": "M", "summary": "The store records the reader level each record kind needs and stops syncing rather than dropping what it cannot read. Every write is one transaction with a command ID. Also adds the SQLite busy timeout deferred from the Phase 0 review.", "depends": ["fo-record-store"], "evidence": ["docs/planning/year-plan/contract.md#persistence-sync-and-privacy"], "updated": "2026-10-15"}, {"id": "ap-launch", "area": "app", "title": "Launch, deep link and resume", "status": "designed", "size": "S", "summary": "The app opens straight into the year plan, and a wishgrid://year-plan link opens a given year and step. A fresh install opens Step 1 of next year, and a relaunch resumes at the furthest step reached.", "depends": ["fo-store-write-path"], "evidence": ["docs/planning/year-plan/contract.md"], "updated": "2026-10-15", "interactions": ["YP-001"]}, {"id": "ap-feel", "area": "app", "title": "Sound, haptics and motion", "status": "designed", "size": "M", "summary": "The app's own sound, haptic and motion policies, copied from Rhythm's patterns, with Reduce Motion honoured.", "depends": ["pa-brush"], "evidence": ["docs/planning/year-plan/contract.md#rendering-motion-sound-and-performance"], "updated": "2026-10-15"}, {"id": "ap-settings", "area": "app", "title": "Settings", "status": "designed", "size": "M", "summary": "Bank-holiday region, the leave title, the calendars to read, and sounds (WG-S09).", "depends": ["fo-store-write-path"], "evidence": ["docs/planning/year-plan/contract.md"], "updated": "2026-10-15", "interactions": ["YP-118"]}, {"id": "ap-accessibility", "area": "app", "title": "Accessibility", "status": "designed", "size": "M", "summary": "VoiceOver labels in the contract's format, Dynamic Type, keyboard reach and Reduce Motion across every screen, checked as the contract's Accessibility section requires.", "depends": ["sf-rows-edit", "pa-brush", "rf-screen", "ft-month"], "evidence": ["docs/planning/year-plan/contract.md#accessibility"], "updated": "2026-10-15"}, {"id": "sf-readonly-grid", "area": "spoken", "title": "Read-only Step 1 grid", "status": "merged", "size": "M", "summary": "The app opens on next year's Step 1 grid: hours gone, the sample rows in bands, free squares and the Left for you counter (3,112 hours, 36% for 2027). Nothing is editable yet.", "depends": ["fo-year-geometry"], "evidence": ["Apps/WishGrid/Step1", "Apps/WishGridTests/SpokenForModelTests.swift", "https://github.com/OlliePage/wish-grid/pull/1"], "updated": "2026-10-15"}, {"id": "sf-zoom", "area": "spoken", "title": "Whole-year grid and zoom", "status": "designed", "size": "M", "summary": "The Canvas-drawn grid with the overlay reserve, zoomed by buttons, pinch and Ctrl-scroll.", "depends": ["sf-readonly-grid"], "evidence": ["design/concepts/year-plan/spoken-for.png", "docs/planning/year-plan/contract.md#step-1-spoken-for"], "updated": "2026-10-15", "interactions": ["YP-002", "YP-013"]}, {"id": "sf-rows-edit", "area": "spoken", "title": "Edit what is spoken for", "status": "designed", "size": "L", "summary": "Edit the sample rows; add and remove with Undo; Work holiday days; Sleep's bedtime and Work's days and hours (OD-YP-12 as recommended); the year stepper and effective-dated rows. Work's working days flow into the saved row, not an assumed Monday to Friday.", "depends": ["sf-readonly-grid", "fo-store-write-path"], "evidence": ["design/concepts/year-plan/spoken-for.png", "docs/planning/year-plan/contract.md#step-1-spoken-for"], "updated": "2026-10-15", "interactions": ["YP-003", "YP-004", "YP-005", "YP-006", "YP-007", "YP-008", "YP-009", "YP-010", "YP-016"]}, {"id": "sf-counter-panel", "area": "spoken", "title": "Counter, verdict, panel and rail", "status": "designed", "size": "M", "summary": "The Left for you counter with its verdict, bar and key, and the side panel that collapses to a rail.", "depends": ["sf-rows-edit"], "evidence": ["design/concepts/year-plan/spoken-for.png"], "updated": "2026-10-15", "interactions": ["YP-011", "YP-012", "YP-014"]}, {"id": "sf-continue", "area": "spoken", "title": "Continue to Paint", "status": "designed", "size": "S", "summary": "The button that moves on to Step 2, opening a placeholder until Paint exists.", "depends": ["sf-counter-panel"], "evidence": ["docs/planning/year-plan/contract.md"], "updated": "2026-10-15", "interactions": ["YP-015"]}, {"id": "sf-parity", "area": "spoken", "title": "Step 1 matches its board", "status": "designed", "size": "S", "summary": "Preview route year-spoken, UI tests, and a recorded side-by-side comparison of the iPad render with spoken-for.png, listing what still differs.", "depends": ["sf-zoom", "sf-rows-edit", "sf-counter-panel", "sf-continue", "ap-launch"], "evidence": ["design/concepts/year-plan/spoken-for.png", "docs/planning/year-plan/audit.md"], "updated": "2026-10-15"}, {"id": "pa-grid", "area": "paint", "title": "Paint grid", "status": "designed", "size": "M", "summary": "The Paint grid matching Step 1, with the year stepper, rebuilt when the year changes while keeping positions.", "depends": ["sf-parity"], "evidence": ["design/concepts/year-plan/paint.png", "docs/planning/year-plan/contract.md#step-2-paint"], "updated": "2026-10-15", "interactions": ["YP-017", "YP-018", "YP-019"]}, {"id": "pa-new-block", "area": "paint", "title": "New block sheet", "status": "designed", "size": "L", "summary": "Name, limit and the days of the year painted on a small calendar, then only the questions that change the outcome, each with a visible default (OD-YP-10).", "depends": ["pa-grid"], "evidence": ["design/concepts/year-plan/new-block.jpg", "docs/planning/year-plan/contract.md#step-2-paint"], "updated": "2026-10-15", "interactions": ["YP-020", "YP-021", "YP-022", "YP-023", "YP-024", "YP-025", "YP-121", "YP-122"]}, {"id": "pa-cards-pots", "area": "paint", "title": "Block cards and pots", "status": "designed", "size": "M", "summary": "Block cards, picking by tap, spotlight, pots that drain, effective limits from chosen days, and over-full pots.", "depends": ["pa-new-block"], "evidence": ["design/concepts/year-plan/paint.png"], "updated": "2026-10-15", "interactions": ["YP-026", "YP-027", "YP-028", "YP-029", "YP-030", "YP-116"]}, {"id": "pa-block-menu", "area": "paint", "title": "Block menu", "status": "designed", "size": "M", "summary": "Rename, colour, change limit and days, reorder and delete. There is no link to a Rhythm activity in version 1 (YP-119 deferred, OD-YP-3).", "depends": ["pa-cards-pots"], "evidence": ["design/concepts/year-plan/paint.png"], "updated": "2026-10-15", "interactions": ["YP-113", "YP-114", "YP-115"]}, {"id": "pa-brush", "area": "paint", "title": "Brush painting", "status": "designed", "size": "L", "summary": "Hit testing, interpolation, half squares, no overwriting, pot refusal and the eraser.", "depends": ["pa-cards-pots"], "evidence": ["design/concepts/year-plan/paint.png", "docs/planning/year-plan/contract.md#painting"], "updated": "2026-10-15", "interactions": ["YP-031", "YP-032", "YP-033", "YP-034", "YP-035", "YP-036", "YP-037"]}, {"id": "pa-gestures", "area": "paint", "title": "Brush size, pan, zoom, Undo", "status": "designed", "size": "M", "summary": "Brush size; two-finger pan and pinch; zoom; Undo and redo.", "depends": ["pa-brush"], "evidence": ["design/concepts/year-plan/paint.png"], "updated": "2026-10-15", "interactions": ["YP-039", "YP-040", "YP-041", "YP-042"]}, {"id": "pa-counter", "area": "paint", "title": "Paint counter and year overlay", "status": "designed", "size": "S", "summary": "The counter with units and average, the year overlay and the bar.", "depends": ["pa-brush"], "evidence": ["design/concepts/year-plan/paint.png"], "updated": "2026-10-15", "interactions": ["YP-052", "YP-053", "YP-054", "YP-055"]}, {"id": "pa-panel-nav", "area": "paint", "title": "Paint panel and navigation", "status": "designed", "size": "S", "summary": "Panel collapse with the two-letter rail, navigation, and Continue to Refine (placeholder until Refine exists).", "depends": ["pa-cards-pots"], "evidence": ["design/concepts/year-plan/paint.png"], "updated": "2026-10-15", "interactions": ["YP-062", "YP-063", "YP-064"]}, {"id": "pa-clash", "area": "paint", "title": "Paint clashes from two devices", "status": "designed", "size": "M", "summary": "When two devices paint the same square, the clash is resolved on load as the contract describes.", "depends": ["pa-brush", "fo-store-write-path"], "evidence": ["docs/planning/year-plan/contract.md#painting"], "updated": "2026-10-15", "interactions": ["YP-117"]}, {"id": "pa-perf", "area": "paint", "title": "Painting stays smooth", "status": "designed", "size": "S", "summary": "A performance test for painting at whole-year zoom against the contract's budget.", "depends": ["pa-brush"], "evidence": ["docs/planning/year-plan/contract.md#rendering-motion-sound-and-performance"], "updated": "2026-10-15"}, {"id": "pa-hover", "area": "paint", "title": "Brush preview on hover", "status": "designed", "size": "S", "summary": "The brush preview under the pointer and the hovering Pencil.", "depends": ["pa-gestures"], "evidence": ["design/concepts/year-plan/paint.png"], "updated": "2026-10-15", "interactions": ["YP-038"]}, {"id": "pa-select-copy", "area": "paint", "title": "Select, copy and every week", "status": "designed", "size": "L", "summary": "Clear all; select, duplicate, every week, copy, paste and rub out.", "depends": ["pa-gestures"], "evidence": ["design/concepts/year-plan/paint.png"], "updated": "2026-10-15", "interactions": ["YP-043", "YP-044", "YP-045", "YP-046", "YP-047", "YP-048"]}, {"id": "pa-tidy", "area": "paint", "title": "Tidy and labels", "status": "designed", "size": "M", "summary": "Tidy and Undo tidy, and block labels on the grid.", "depends": ["pa-brush"], "evidence": ["design/concepts/year-plan/paint.png"], "updated": "2026-10-15", "interactions": ["YP-049", "YP-050", "YP-051"]}, {"id": "pa-help-shortcuts", "area": "paint", "title": "Help tips and keyboard shortcuts", "status": "designed", "size": "M", "summary": "Help tips, and keyboard shortcuts as menu commands that are disabled while typing.", "depends": ["pa-select-copy", "pa-tidy"], "evidence": ["docs/planning/year-plan/contract.md"], "updated": "2026-10-15", "interactions": ["YP-061", "YP-065"]}, {"id": "pa-say-it", "area": "paint", "title": "Say it", "status": "designed", "size": "M", "summary": "Setting amounts by saying them, using Apple's on-device model with the phrase reader as the plain fallback. Needs the engine's zone order and carry, so it lands with Fit.", "depends": ["pa-cards-pots", "en-engine"], "evidence": ["docs/planning/year-plan/contract.md#apples-on-device-model"], "updated": "2026-10-15", "interactions": ["YP-056", "YP-057", "YP-058", "YP-059", "YP-060"]}, {"id": "qa-device-paint", "area": "quality", "title": "Device check: painting", "status": "designed", "size": "S", "summary": "Ollie paints on the iPad with finger and Pencil, and on the Mac with trackpad and keyboard, and records what feels wrong.", "depends": ["pa-hover", "pa-select-copy", "pa-tidy", "pa-help-shortcuts", "ap-feel", "pa-perf"], "evidence": ["docs/planning/year-plan/delivery.md"], "updated": "2026-10-15"}, {"id": "rf-screen", "area": "refine", "title": "Refine screen", "status": "designed", "size": "M", "summary": "Reads the shared blocks; each block's behaviour as one sentence, with its options and the list.", "depends": ["pa-block-menu"], "evidence": ["design/concepts/year-plan/refine.png", "docs/planning/year-plan/contract.md#step-3-refine"], "updated": "2026-10-15", "interactions": ["YP-067", "YP-068", "YP-069", "YP-070", "YP-077"]}, {"id": "rf-calendar", "area": "refine", "title": "Days of the year, months and warnings", "status": "designed", "size": "M", "summary": "The calendar for days of the year, whole months, clearing, the special-day alert and the over-full warning.", "depends": ["rf-screen"], "evidence": ["design/concepts/year-plan/refine.png"], "updated": "2026-10-15", "interactions": ["YP-071", "YP-072", "YP-073", "YP-074", "YP-078"]}, {"id": "rf-also", "area": "refine", "title": "The Also answers", "status": "designed", "size": "S", "summary": "The extra answers under Also.", "depends": ["rf-screen"], "evidence": ["design/concepts/year-plan/refine.png"], "updated": "2026-10-15", "interactions": ["YP-075"]}, {"id": "rf-carry", "area": "refine", "title": "Comes-as, needs and carry-over", "status": "designed", "size": "S", "summary": "The comes-as, needs and carry-over answers, testable once the engine exists.", "depends": ["rf-screen", "en-engine"], "evidence": ["docs/planning/year-plan/contract.md#step-3-refine"], "updated": "2026-10-15", "interactions": ["YP-076"]}, {"id": "rf-nav", "area": "refine", "title": "Back to painting and Fit", "status": "designed", "size": "S", "summary": "Back to painting, and Fit into the year (placeholder until Fit exists).", "depends": ["rf-screen"], "evidence": ["design/concepts/year-plan/refine.png"], "updated": "2026-10-15", "interactions": ["YP-079", "YP-080"]}, {"id": "en-fixture-gym", "area": "engine", "title": "Hand-checked Gym sessions", "status": "blocked", "size": "S", "summary": "Golden fixture 1 needs the first eight Gym sessions worked out by hand by the contract's author. The builder prepares the fixture and its computed answer for Ollie to confirm.", "depends": [], "evidence": ["docs/planning/year-plan/contract.md#the-fitting-engine"], "updated": "2026-10-15", "blocker": "Ollie: hand-check the first eight Gym sessions for golden fixture 1"}, {"id": "en-baseline", "area": "engine", "title": "Year baseline", "status": "designed", "size": "M", "summary": "YearBaseline built from Step 1's rows, with held time and the end of the work span (OD-YP-12).", "depends": ["sf-rows-edit"], "evidence": ["docs/planning/year-plan/contract.md#the-fitting-engine"], "updated": "2026-10-15"}, {"id": "en-calendar-read", "area": "engine", "title": "Reading the chosen calendars", "status": "designed", "size": "M", "summary": "Calendar access and reading the chosen calendars for the plan year, with coverage, ignoring the Year plan calendar and exported events.", "depends": ["ap-settings"], "evidence": ["docs/planning/year-plan/contract.md#the-fitting-engine"], "updated": "2026-10-15", "interactions": ["YP-089", "YP-090"]}, {"id": "en-engine", "area": "engine", "title": "The fitting engine", "status": "designed", "size": "L", "summary": "YearFitEngine: phases, the credit rule, bridges, priority, wrap, cadence, and accepted months as fixed inputs.", "depends": ["en-baseline", "en-calendar-read", "rf-calendar"], "evidence": ["docs/planning/year-plan/contract.md#the-fitting-engine"], "updated": "2026-10-15", "interactions": ["YP-084", "YP-091", "YP-092", "YP-093", "YP-094", "YP-095", "YP-096"]}, {"id": "en-fixtures", "area": "engine", "title": "Golden fixtures and performance", "status": "designed", "size": "M", "summary": "Golden fixtures 1 to 9 from the contract, the determinism test and the performance budget.", "depends": ["en-engine", "en-fixture-gym"], "evidence": ["docs/planning/year-plan/contract.md#testing-and-acceptance"], "updated": "2026-10-15"}, {"id": "ft-planner", "area": "fit", "title": "Year planner", "status": "designed", "size": "L", "summary": "The plain twelve-month planner after Fit: empty year, year switch, reveal, day cells with popovers, the wish list and the miniature.", "depends": ["en-engine"], "evidence": ["design/concepts/year-plan/fit-empty.png", "design/concepts/year-plan/fit-planned.jpg", "docs/planning/year-plan/contract.md#step-4-fit"], "updated": "2026-10-15", "interactions": ["YP-081", "YP-082", "YP-083", "YP-085", "YP-086", "YP-087", "YP-088"]}, {"id": "ft-summary", "area": "fit", "title": "Fit summary", "status": "designed", "size": "M", "summary": "The summary of what fitted, what did not and why.", "depends": ["ft-planner"], "evidence": ["design/concepts/year-plan/fit-summary.jpg"], "updated": "2026-10-15", "interactions": ["YP-097"]}, {"id": "ft-month", "area": "fit", "title": "Month view", "status": "designed", "size": "M", "summary": "The month view, with chips that show names on every day.", "depends": ["ft-planner"], "evidence": ["design/concepts/year-plan/fit-month.jpg"], "updated": "2026-10-15", "interactions": ["YP-098", "YP-099"]}, {"id": "ft-month-edits", "area": "fit", "title": "Adjusting a month", "status": "designed", "size": "L", "summary": "Move, shift and remove; trips; rule-breaking overrides; Undo; Re-plan; read-only accepted months; replay with flagged failures.", "depends": ["ft-month"], "evidence": ["design/concepts/year-plan/fit-month.jpg"], "updated": "2026-10-15", "interactions": ["YP-100", "YP-101", "YP-102", "YP-103", "YP-104", "YP-105", "YP-106"]}, {"id": "ft-accept", "area": "fit", "title": "Accept into the Year plan calendar", "status": "designed", "size": "L", "summary": "Accepting a month writes the store and the app's own Year plan calendar as one change, writing and removing only recorded events (OD-YP-2; OD-YP-13 to 15 as recommended). Trips across months go whole; Undo and taking back; accepted months stay fixed in later fits.", "depends": ["ft-month-edits", "fo-store-write-path"], "evidence": ["docs/planning/year-plan/contract.md#committing-a-plan-into-the-year-plan-calendar"], "updated": "2026-10-15", "interactions": ["YP-107", "YP-108", "YP-109", "YP-123"]}, {"id": "qa-device-accept", "area": "quality", "title": "Device check: accept a month", "status": "designed", "size": "S", "summary": "Ollie accepts a month on the iPad and sees it in the Year plan calendar and in Rhythm's Today as a fixed appointment.", "depends": ["ft-accept"], "evidence": ["docs/planning/year-plan/delivery.md"], "updated": "2026-10-15"}, {"id": "ex-ics", "area": "exports", "title": "Calendar file", "status": "designed", "size": "M", "summary": "The .ics file with the planning zone, stable identifiers, SEQUENCE and the RFC checks.", "depends": ["ft-planner"], "evidence": ["docs/planning/year-plan/contract.md#exports"], "updated": "2026-10-15", "interactions": ["YP-110"]}, {"id": "ex-pdf", "area": "exports", "title": "Printable PDF", "status": "designed", "size": "M", "summary": "The twelve-page A4 PDF of the year.", "depends": ["ft-planner"], "evidence": ["docs/planning/year-plan/contract.md#exports"], "updated": "2026-10-15", "interactions": ["YP-111"]}, {"id": "ex-share", "area": "exports", "title": "Export menu and share sheet", "status": "designed", "size": "S", "summary": "Refusal before a fit, the share sheet and the file exporter (WG-S08).", "depends": ["ex-ics", "ex-pdf"], "evidence": ["docs/planning/year-plan/contract.md#exports"], "updated": "2026-10-15", "interactions": ["YP-112"]}, {"id": "ex-import-proof", "area": "exports", "title": "Imports into Apple and Google Calendar", "status": "designed", "size": "S", "summary": "One manual import into Apple Calendar and one into Google Calendar, recorded as device evidence.", "depends": ["ex-share"], "evidence": ["docs/planning/year-plan/delivery.md"], "updated": "2026-10-15"}, {"id": "sy-cloudkit", "area": "sync", "title": "Private iCloud sync", "status": "designed", "size": "L", "summary": "The app's own optional private CloudKit container: edits on two devices merge per record, real conflicts are shown for review. The contract specifies it, but delivery.md gives it no phase yet; it must land before the iPhone check.", "depends": ["fo-store-write-path"], "evidence": ["docs/planning/year-plan/contract.md#persistence-sync-and-privacy"], "updated": "2026-10-15"}, {"id": "sy-privacy", "area": "sync", "title": "Privacy guarantees", "status": "designed", "size": "S", "summary": "No year-plan content on the Lock Screen or in widgets, no telemetry, and exports that never include Step 1 details, each checked.", "depends": ["ex-share", "sy-cloudkit"], "evidence": ["docs/planning/year-plan/contract.md#persistence-sync-and-privacy"], "updated": "2026-10-15"}, {"id": "ip-board", "area": "iphone", "title": "iPhone board (WG-S10)", "status": "open", "size": "S", "summary": "There is no approved iPhone design yet. Draw the Year companion board on the design canvas and get Ollie's approval before building.", "depends": [], "evidence": ["design/screens.json"], "updated": "2026-10-15"}, {"id": "ip-companion", "area": "iphone", "title": "Year companion screens", "status": "open", "size": "M", "summary": "The Year companion screen and one-column steps; the read-only grid with New block and Say it.", "depends": ["ip-board", "pa-say-it", "sf-parity"], "evidence": ["docs/planning/year-plan/contract.md#platforms-ipad-and-mac-first-iphone-as-companion"], "updated": "2026-10-15", "interactions": ["YP-066"]}, {"id": "ip-fit", "area": "iphone", "title": "Fit on iPhone", "status": "open", "size": "M", "summary": "Month list, month view, summary and Accept on the iPhone.", "depends": ["ip-companion", "ft-accept"], "evidence": ["docs/planning/year-plan/contract.md"], "updated": "2026-10-15", "interactions": ["YP-120"]}, {"id": "qa-device-iphone", "area": "quality", "title": "Device check: iPhone and sync", "status": "designed", "size": "S", "summary": "Ollie checks the iPhone, including a change made on the iPhone appearing on the iPad after sync.", "depends": ["ip-fit", "sy-cloudkit"], "evidence": ["docs/planning/year-plan/delivery.md"], "updated": "2026-10-15"}, {"id": "qa-check", "area": "quality", "title": "Local merge gate", "status": "live", "size": "M", "summary": "python3 scripts/wishgrid.py check: regenerates the project, runs core and app tests on the iPad simulator, builds iOS and macOS, validates the contract and checks whitespace. In use as the merge gate since 9 October 2026.", "depends": [], "evidence": ["scripts/wishgrid.py", "scripts/validate-year-plan-contract.py"], "updated": "2026-10-15"}, {"id": "qa-testflight", "area": "quality", "title": "TestFlight on every merge", "status": "live", "size": "M", "summary": "Xcode Cloud workflow Main to TestFlight archives iOS and macOS on every merge to main and delivers both to Ollie's internal testing group. Build 3, started by the merge of PR #4, put both platforms in testing on 15 October 2026 at 16:13 BST.", "depends": ["fo-project", "qa-check"], "evidence": ["docs/TESTFLIGHT.md", "https://github.com/OlliePage/wish-grid/pull/4"], "updated": "2026-10-15"}, {"id": "qa-tech-tree", "area": "quality", "title": "Tech tree", "status": "merged", "size": "M", "summary": "This map: the graph, the page, claim and release, and the guard hooks, ported from Iron Road.", "depends": [], "evidence": ["docs/roadmap/production-schematic.md", "docs/roadmap/tech-tree.json", "https://github.com/OlliePage/wish-grid/pull/5"], "updated": "2026-10-15"}, {"id": "qa-audit", "area": "quality", "title": "Independent audit", "status": "designed", "size": "L", "summary": "An independent auditor runs audit.md on one candidate commit, fills in audit-results.json, and validate-year-plan-contract.py --require-pass passes or records each remaining row as blocked with what it needs.", "depends": ["qa-device-paint", "qa-device-accept", "qa-device-iphone", "ex-import-proof", "sy-privacy", "ap-accessibility", "en-fixtures", "ft-summary"], "evidence": ["docs/planning/year-plan/audit.md", "docs/planning/year-plan/audit-results.json"], "updated": "2026-10-15"}, {"id": "go-ships", "area": "goal", "title": "Every merge reaches Ollie's devices", "status": "live", "size": "M", "summary": "The project builds for iPad, Mac and iPhone, the local gate guards main, and each merge arrives through TestFlight.", "depends": ["fo-project", "qa-check", "qa-testflight"], "evidence": ["docs/TESTFLIGHT.md", "https://github.com/OlliePage/wish-grid/pull/4"], "updated": "2026-10-15", "gate": true, "tier": 1}, {"id": "go-spoken", "area": "goal", "title": "Step 1 works on the iPad", "status": "open", "size": "M", "summary": "Ollie opens Wish Grid on the iPad or Mac and edits what is already spoken for until it matches his year, matching the Spoken for board.", "depends": ["sf-parity", "ap-launch", "go-ships"], "evidence": [], "updated": "2026-10-15", "gate": true, "tier": 1}, {"id": "go-paint", "area": "goal", "title": "Painting works", "status": "open", "size": "M", "summary": "Blocks can be made, painted and adjusted on the grid with finger, Pencil, trackpad and keyboard, and it feels right on the devices.", "depends": ["pa-block-menu", "pa-panel-nav", "pa-counter", "pa-clash", "qa-device-paint", "go-spoken"], "evidence": [], "updated": "2026-10-15", "gate": true, "tier": 1}, {"id": "go-refine", "area": "goal", "title": "Refine and Settings", "status": "open", "size": "M", "summary": "Every block's behaviour can be checked and adjusted in one sentence, and the app's settings exist.", "depends": ["rf-calendar", "rf-also", "rf-nav", "ap-settings", "go-paint"], "evidence": [], "updated": "2026-10-15", "gate": true, "tier": 1}, {"id": "go-fit", "area": "goal", "title": "Fit a year", "status": "open", "size": "M", "summary": "Pressing Fit arranges the year in a real calendar with a summary, honouring every grid rule. Nothing is committed yet.", "depends": ["en-fixtures", "ft-summary", "pa-say-it", "rf-carry", "go-refine"], "evidence": [], "updated": "2026-10-15", "gate": true, "tier": 1}, {"id": "go-accept", "area": "goal", "title": "Accept into the calendar", "status": "open", "size": "M", "summary": "A month can be adjusted and accepted into the Year plan calendar, and appears in Rhythm as fixed appointments.", "depends": ["ft-accept", "qa-device-accept", "go-fit"], "evidence": [], "updated": "2026-10-15", "gate": true, "tier": 1}, {"id": "go-exports", "area": "goal", "title": "Exports", "status": "open", "size": "M", "summary": "The year exports as a calendar file and a printable PDF.", "depends": ["ex-import-proof", "go-fit"], "evidence": [], "updated": "2026-10-15", "gate": true, "tier": 2}, {"id": "go-iphone", "area": "goal", "title": "iPhone companion and sync", "status": "open", "size": "M", "summary": "The iPhone reads everything, makes blocks and accepts months, and changes sync between devices.", "depends": ["qa-device-iphone", "sy-privacy", "go-accept"], "evidence": [], "updated": "2026-10-15", "gate": true, "tier": 2}, {"id": "go-audit", "area": "goal", "title": "The audit passes", "status": "open", "size": "M", "summary": "The independent audit of the contract passes on one candidate commit.", "depends": ["qa-audit", "go-exports", "go-iphone"], "evidence": [], "updated": "2026-10-15", "gate": true, "tier": 3}, {"id": "go-v1", "area": "goal", "title": "Version 1 ready", "status": "open", "size": "L", "summary": "Every delivery phase merged and on TestFlight, the owner's device checks done, and the contract audit passed.", "depends": ["go-ships", "go-spoken", "go-paint", "go-refine", "go-fit", "go-accept", "go-exports", "go-iphone", "go-audit"], "evidence": [], "updated": "2026-10-15", "gate": true, "tier": 0}]}, "computed": {"depth": {"fo-project": 0, "fo-bank-holidays": 0, "fo-year-geometry": 1, "fo-domain-model": 0, "fo-record-store": 1, "fo-store-write-path": 2, "ap-launch": 3, "sf-readonly-grid": 2, "sf-zoom": 3, "sf-rows-edit": 3, "sf-counter-panel": 4, "sf-continue": 5, "sf-parity": 6, "pa-grid": 7, "pa-new-block": 8, "pa-cards-pots": 9, "pa-brush": 10, "ap-feel": 11, "ap-settings": 3, "pa-block-menu": 10, "rf-screen": 11, "en-baseline": 4, "en-calendar-read": 4, "rf-calendar": 12, "en-engine": 13, "ft-planner": 14, "ft-month": 15, "ap-accessibility": 16, "pa-gestures": 11, "pa-counter": 11, "pa-panel-nav": 10, "pa-clash": 11, "pa-perf": 11, "pa-hover": 12, "pa-select-copy": 12, "pa-tidy": 11, "pa-help-shortcuts": 13, "pa-say-it": 14, "qa-device-paint": 14, "rf-also": 12, "rf-carry": 14, "rf-nav": 12, "en-fixture-gym": 0, "en-fixtures": 14, "ft-summary": 15, "ft-month-edits": 16, "ft-accept": 17, "qa-device-accept": 18, "ex-ics": 15, "ex-pdf": 15, "ex-share": 16, "ex-import-proof": 17, "sy-cloudkit": 3, "sy-privacy": 17, "ip-board": 0, "ip-companion": 15, "ip-fit": 18, "qa-device-iphone": 19, "qa-check": 0, "qa-testflight": 1, "qa-tech-tree": 0, "qa-audit": 20, "go-ships": 2, "go-spoken": 7, "go-paint": 15, "go-refine": 16, "go-fit": 17, "go-accept": 19, "go-exports": 18, "go-iphone": 20, "go-audit": 21, "go-v1": 22}, "maxDepth": 22, "dependents": {"fo-project": ["qa-testflight", "go-ships"], "fo-bank-holidays": ["fo-year-geometry"], "fo-year-geometry": ["sf-readonly-grid"], "fo-domain-model": ["fo-record-store"], "fo-record-store": ["fo-store-write-path"], "fo-store-write-path": ["ap-launch", "ap-settings", "sf-rows-edit", "pa-clash", "ft-accept", "sy-cloudkit"], "ap-launch": ["sf-parity", "go-spoken"], "ap-feel": ["qa-device-paint"], "ap-settings": ["en-calendar-read", "go-refine"], "ap-accessibility": ["qa-audit"], "sf-readonly-grid": ["sf-zoom", "sf-rows-edit"], "sf-zoom": ["sf-parity"], "sf-rows-edit": ["ap-accessibility", "sf-counter-panel", "sf-parity", "en-baseline"], "sf-counter-panel": ["sf-continue", "sf-parity"], "sf-continue": ["sf-parity"], "sf-parity": ["pa-grid", "ip-companion", "go-spoken"], "pa-grid": ["pa-new-block"], "pa-new-block": ["pa-cards-pots"], "pa-cards-pots": ["pa-block-menu", "pa-brush", "pa-panel-nav", "pa-say-it"], "pa-block-menu": ["rf-screen", "go-paint"], "pa-brush": ["ap-feel", "ap-accessibility", "pa-gestures", "pa-counter", "pa-clash", "pa-perf", "pa-tidy"], "pa-gestures": ["pa-hover", "pa-select-copy"], "pa-counter": ["go-paint"], "pa-panel-nav": ["go-paint"], "pa-clash": ["go-paint"], "pa-perf": ["qa-device-paint"], "pa-hover": ["qa-device-paint"], "pa-select-copy": ["pa-help-shortcuts", "qa-device-paint"], "pa-tidy": ["pa-help-shortcuts", "qa-device-paint"], "pa-help-shortcuts": ["qa-device-paint"], "pa-say-it": ["ip-companion", "go-fit"], "qa-device-paint": ["qa-audit", "go-paint"], "rf-screen": ["ap-accessibility", "rf-calendar", "rf-also", "rf-carry", "rf-nav"], "rf-calendar": ["en-engine", "go-refine"], "rf-also": ["go-refine"], "rf-carry": ["go-fit"], "rf-nav": ["go-refine"], "en-fixture-gym": ["en-fixtures"], "en-baseline": ["en-engine"], "en-calendar-read": ["en-engine"], "en-engine": ["pa-say-it", "rf-carry", "en-fixtures", "ft-planner"], "en-fixtures": ["qa-audit", "go-fit"], "ft-planner": ["ft-summary", "ft-month", "ex-ics", "ex-pdf"], "ft-summary": ["qa-audit", "go-fit"], "ft-month": ["ap-accessibility", "ft-month-edits"], "ft-month-edits": ["ft-accept"], "ft-accept": ["qa-device-accept", "ip-fit", "go-accept"], "qa-device-accept": ["qa-audit", "go-accept"], "ex-ics": ["ex-share"], "ex-pdf": ["ex-share"], "ex-share": ["ex-import-proof", "sy-privacy"], "ex-import-proof": ["qa-audit", "go-exports"], "sy-cloudkit": ["sy-privacy", "qa-device-iphone"], "sy-privacy": ["qa-audit", "go-iphone"], "ip-board": ["ip-companion"], "ip-companion": ["ip-fit"], "ip-fit": ["qa-device-iphone"], "qa-device-iphone": ["qa-audit", "go-iphone"], "qa-check": ["qa-testflight", "go-ships"], "qa-testflight": ["go-ships"], "qa-tech-tree": [], "qa-audit": ["go-audit"], "go-ships": ["go-spoken", "go-v1"], "go-spoken": ["go-paint", "go-v1"], "go-paint": ["go-refine", "go-v1"], "go-refine": ["go-fit", "go-v1"], "go-fit": ["go-accept", "go-exports", "go-v1"], "go-accept": ["go-iphone", "go-v1"], "go-exports": ["go-audit", "go-v1"], "go-iphone": ["go-audit", "go-v1"], "go-audit": ["go-v1"], "go-v1": []}, "areas": {"foundations": {"percent": 73, "exact": 73.3, "counts": {"live": 0, "merged": 5, "branch": 0, "active": 0, "paused": 0, "designed": 1, "open": 0, "blocked": 0, "out": 0}, "weighted": 12.0, "earned": 8.8}, "spoken": {"percent": 28, "exact": 27.7, "counts": {"live": 0, "merged": 1, "branch": 0, "active": 0, "paused": 0, "designed": 5, "open": 0, "blocked": 0, "out": 0}, "weighted": 11.0, "earned": 3.05}, "paint": {"percent": 15, "exact": 15.0, "counts": {"live": 0, "merged": 0, "branch": 0, "active": 0, "paused": 0, "designed": 15, "open": 0, "blocked": 0, "out": 0}, "weighted": 29.0, "earned": 4.35}, "refine": {"percent": 15, "exact": 15.0, "counts": {"live": 0, "merged": 0, "branch": 0, "active": 0, "paused": 0, "designed": 5, "open": 0, "blocked": 0, "out": 0}, "weighted": 7.0, "earned": 1.05}, "engine": {"percent": 14, "exact": 13.5, "counts": {"live": 0, "merged": 0, "branch": 0, "active": 0, "paused": 0, "designed": 4, "open": 0, "blocked": 1, "out": 0}, "weighted": 10.0, "earned": 1.35}, "fit": {"percent": 15, "exact": 15.0, "counts": {"live": 0, "merged": 0, "branch": 0, "active": 0, "paused": 0, "designed": 5, "open": 0, "blocked": 0, "out": 0}, "weighted": 13.0, "earned": 1.95}, "exports": {"percent": 15, "exact": 15.0, "counts": {"live": 0, "merged": 0, "branch": 0, "active": 0, "paused": 0, "designed": 4, "open": 0, "blocked": 0, "out": 0}, "weighted": 6.0, "earned": 0.9}, "iphone": {"percent": 0, "exact": 0.0, "counts": {"live": 0, "merged": 0, "branch": 0, "active": 0, "paused": 0, "designed": 0, "open": 3, "blocked": 0, "out": 0}, "weighted": 5.0, "earned": 0.0}, "app": {"percent": 15, "exact": 15.0, "counts": {"live": 0, "merged": 0, "branch": 0, "active": 0, "paused": 0, "designed": 4, "open": 0, "blocked": 0, "out": 0}, "weighted": 7.0, "earned": 1.05}, "sync": {"percent": 15, "exact": 15.0, "counts": {"live": 0, "merged": 0, "branch": 0, "active": 0, "paused": 0, "designed": 2, "open": 0, "blocked": 0, "out": 0}, "weighted": 4.0, "earned": 0.6}, "quality": {"percent": 55, "exact": 55.0, "counts": {"live": 2, "merged": 1, "branch": 0, "active": 0, "paused": 0, "designed": 4, "open": 0, "blocked": 0, "out": 0}, "weighted": 12.0, "earned": 6.6}, "goal": {"percent": 10, "exact": 9.5, "counts": {"live": 1, "merged": 0, "branch": 0, "active": 0, "paused": 0, "designed": 0, "open": 9, "blocked": 0, "out": 0}, "weighted": 21.0, "earned": 2.0}}, "overall": {"percent": 26, "exact": 25.6, "counts": {"live": 2, "merged": 7, "branch": 0, "active": 0, "paused": 0, "designed": 49, "open": 3, "blocked": 1, "out": 0}, "weighted": 116.0, "earned": 29.7}, "frontier": ["fo-store-write-path", "sf-zoom", "ip-board"], "active": [], "blocked": ["en-fixture-gym"], "history": [{"hash": "15b3285", "fullHash": "15b328546131344ebc58175d0186527422da5c5a", "author": "Milo Garth", "date": "2026-10-15T16:32:37+01:00", "title": "Roadmap: qa-tech-tree merged", "pr": null, "branch": null, "agents": [], "sessions": [], "commits": 1, "changes": [{"kind": "status", "id": "qa-tech-tree", "title": "Tech tree", "text": "branch → merged"}, {"kind": "evidence", "id": "qa-tech-tree", "title": "Tech tree", "text": "+1 evidence: https://github.com/OlliePage/wish-grid/pull/5"}], "percentFrom": 25.2, "percentTo": 25.6, "summary": "1 moved · 25.2 → 25.6 %"}, {"hash": "5e78a85", "fullHash": "5e78a851f3d437160e167b66af65f602da0c765f", "author": "Ollie", "date": "2026-10-15T16:32:14+01:00", "title": "Tech tree: the Wish Grid roadmap map, page and guard hooks", "pr": 5, "branch": "claude/tech-tree", "agents": ["Claude Opus 5.5"], "sessions": [], "commits": 5, "changes": [{"kind": "added", "id": "fo-project", "title": "Multiplatform project", "text": "added as merged"}, {"kind": "added", "id": "fo-bank-holidays", "title": "Bank holidays", "text": "added as merged"}, {"kind": "added", "id": "fo-year-geometry", "title": "Year geometry and Step 1 arithmetic", "text": "added as merged"}, {"kind": "added", "id": "fo-domain-model", "title": "Domain model with tolerant decoding", "text": "added as merged"}, {"kind": "added", "id": "fo-record-store", "title": "Local record store", "text": "added as merged"}, {"kind": "added", "id": "fo-store-write-path", "title": "Reader level and single write path", "text": "added as designed"}, {"kind": "added", "id": "ap-launch", "title": "Launch, deep link and resume", "text": "added as designed"}, {"kind": "added", "id": "ap-feel", "title": "Sound, haptics and motion", "text": "added as designed"}, {"kind": "added", "id": "ap-settings", "title": "Settings", "text": "added as designed"}, {"kind": "added", "id": "ap-accessibility", "title": "Accessibility", "text": "added as designed"}, {"kind": "added", "id": "sf-readonly-grid", "title": "Read-only Step 1 grid", "text": "added as merged"}, {"kind": "added", "id": "sf-zoom", "title": "Whole-year grid and zoom", "text": "added as designed"}, {"kind": "added", "id": "sf-rows-edit", "title": "Edit what is spoken for", "text": "added as designed"}, {"kind": "added", "id": "sf-counter-panel", "title": "Counter, verdict, panel and rail", "text": "added as designed"}, {"kind": "added", "id": "sf-continue", "title": "Continue to Paint", "text": "added as designed"}, {"kind": "added", "id": "sf-parity", "title": "Step 1 matches its board", "text": "added as designed"}, {"kind": "added", "id": "pa-grid", "title": "Paint grid", "text": "added as designed"}, {"kind": "added", "id": "pa-new-block", "title": "New block sheet", "text": "added as designed"}, {"kind": "added", "id": "pa-cards-pots", "title": "Block cards and pots", "text": "added as designed"}, {"kind": "added", "id": "pa-block-menu", "title": "Block menu", "text": "added as designed"}, {"kind": "added", "id": "pa-brush", "title": "Brush painting", "text": "added as designed"}, {"kind": "added", "id": "pa-gestures", "title": "Brush size, pan, zoom, Undo", "text": "added as designed"}, {"kind": "added", "id": "pa-counter", "title": "Paint counter and year overlay", "text": "added as designed"}, {"kind": "added", "id": "pa-panel-nav", "title": "Paint panel and navigation", "text": "added as designed"}, {"kind": "added", "id": "pa-clash", "title": "Paint clashes from two devices", "text": "added as designed"}, {"kind": "added", "id": "pa-perf", "title": "Painting stays smooth", "text": "added as designed"}, {"kind": "added", "id": "pa-hover", "title": "Brush preview on hover", "text": "added as designed"}, {"kind": "added", "id": "pa-select-copy", "title": "Select, copy and every week", "text": "added as designed"}, {"kind": "added", "id": "pa-tidy", "title": "Tidy and labels", "text": "added as designed"}, {"kind": "added", "id": "pa-help-shortcuts", "title": "Help tips and keyboard shortcuts", "text": "added as designed"}, {"kind": "added", "id": "pa-say-it", "title": "Say it", "text": "added as designed"}, {"kind": "added", "id": "qa-device-paint", "title": "Device check: painting", "text": "added as designed"}, {"kind": "added", "id": "rf-screen", "title": "Refine screen", "text": "added as designed"}, {"kind": "added", "id": "rf-calendar", "title": "Days of the year, months and warnings", "text": "added as designed"}, {"kind": "added", "id": "rf-also", "title": "The Also answers", "text": "added as designed"}, {"kind": "added", "id": "rf-carry", "title": "Comes-as, needs and carry-over", "text": "added as designed"}, {"kind": "added", "id": "rf-nav", "title": "Back to painting and Fit", "text": "added as designed"}, {"kind": "added", "id": "en-fixture-gym", "title": "Hand-checked Gym sessions", "text": "added as blocked"}, {"kind": "added", "id": "en-baseline", "title": "Year baseline", "text": "added as designed"}, {"kind": "added", "id": "en-calendar-read", "title": "Reading the chosen calendars", "text": "added as designed"}, {"kind": "added", "id": "en-engine", "title": "The fitting engine", "text": "added as designed"}, {"kind": "added", "id": "en-fixtures", "title": "Golden fixtures and performance", "text": "added as designed"}, {"kind": "added", "id": "ft-planner", "title": "Year planner", "text": "added as designed"}, {"kind": "added", "id": "ft-summary", "title": "Fit summary", "text": "added as designed"}, {"kind": "added", "id": "ft-month", "title": "Month view", "text": "added as designed"}, {"kind": "added", "id": "ft-month-edits", "title": "Adjusting a month", "text": "added as designed"}, {"kind": "added", "id": "ft-accept", "title": "Accept into the Year plan calendar", "text": "added as designed"}, {"kind": "added", "id": "qa-device-accept", "title": "Device check: accept a month", "text": "added as designed"}, {"kind": "added", "id": "ex-ics", "title": "Calendar file", "text": "added as designed"}, {"kind": "added", "id": "ex-pdf", "title": "Printable PDF", "text": "added as designed"}, {"kind": "added", "id": "ex-share", "title": "Export menu and share sheet", "text": "added as designed"}, {"kind": "added", "id": "ex-import-proof", "title": "Imports into Apple and Google Calendar", "text": "added as designed"}, {"kind": "added", "id": "sy-cloudkit", "title": "Private iCloud sync", "text": "added as designed"}, {"kind": "added", "id": "sy-privacy", "title": "Privacy guarantees", "text": "added as designed"}, {"kind": "added", "id": "ip-board", "title": "iPhone board (WG-S10)", "text": "added as open"}, {"kind": "added", "id": "ip-companion", "title": "Year companion screens", "text": "added as open"}, {"kind": "added", "id": "ip-fit", "title": "Fit on iPhone", "text": "added as open"}, {"kind": "added", "id": "qa-device-iphone", "title": "Device check: iPhone and sync", "text": "added as designed"}, {"kind": "added", "id": "qa-check", "title": "Local merge gate", "text": "added as live"}, {"kind": "added", "id": "qa-testflight", "title": "TestFlight on every merge", "text": "added as live"}, {"kind": "added", "id": "qa-tech-tree", "title": "Tech tree", "text": "added as branch"}, {"kind": "added", "id": "qa-audit", "title": "Independent audit", "text": "added as designed"}, {"kind": "added", "id": "go-ships", "title": "Every merge reaches Ollie's devices", "text": "added as live"}, {"kind": "added", "id": "go-spoken", "title": "Step 1 works on the iPad", "text": "added as open"}, {"kind": "added", "id": "go-paint", "title": "Painting works", "text": "added as open"}, {"kind": "added", "id": "go-refine", "title": "Refine and Settings", "text": "added as open"}, {"kind": "added", "id": "go-fit", "title": "Fit a year", "text": "added as open"}, {"kind": "added", "id": "go-accept", "title": "Accept into the calendar", "text": "added as open"}, {"kind": "added", "id": "go-exports", "title": "Exports", "text": "added as open"}, {"kind": "added", "id": "go-iphone", "title": "iPhone companion and sync", "text": "added as open"}, {"kind": "added", "id": "go-audit", "title": "The audit passes", "text": "added as open"}, {"kind": "added", "id": "go-v1", "title": "Version 1 ready", "text": "added as open"}, {"kind": "meta", "id": "", "title": "meta.artifactUrl", "text": "set to https://claude.ai/artifact/Rz5gmG8mGaMcjVG3SHputQ"}, {"kind": "meta", "id": "", "title": "meta.foundations", "text": "set to [{'label': 'Design contract', 'url': 'https://github.com/OlliePage/wish-grid/blob/main/docs/planning/year-plan/contract.md', 'note': 'The binding specification every node is derived from (version 2 with Amendment 1)'}, {'label': 'Signed-off design canvas', 'url': 'https://claude.ai/artifact/E69LoogCx93g3jVrPL2K4A', 'note': 'The approved boards, frozen into design/concepts/year-plan'}, {'label': 'Build plan', 'url': 'https://github.com/OlliePage/wish-grid/blob/main/docs/planning/year-plan/delivery.md', 'note': 'Phases 0 to 9 and the interaction rows each delivers'}, {'label': 'Interactions', 'url': 'https://github.com/OlliePage/wish-grid/blob/main/docs/planning/year-plan/interactions.md', 'note': 'YP-001 to YP-123, each mapped to one node'}]"}, {"kind": "meta", "id": "", "title": "meta.pagesRepo", "text": "set to OlliePage/p-0641a37d"}, {"kind": "meta", "id": "", "title": "meta.pagesUrl", "text": "set to https://olliepage.github.io/p-0641a37d/"}, {"kind": "meta", "id": "", "title": "meta.schematic", "text": "set to docs/roadmap/production-schematic.md"}, {"kind": "meta", "id": "", "title": "meta.title", "text": "set to Wish Grid Tech Tree"}], "percentFrom": null, "percentTo": 25.2, "summary": "72 added"}], "historyRef": "15b328546131344ebc58175d0186527422da5c5a", "burnup": {"points": [{"t": "2026-10-15T16:32:14+01:00", "hash": "5e78a85", "total": 116.0, "done": 29.2, "pct": 25.2}, {"t": "2026-10-15T16:32:37+01:00", "hash": "15b3285", "total": 116.0, "done": 29.7, "pct": 25.6}]}}}</script>
+<script>
+(function () {
+  const payload = JSON.parse(document.getElementById('tree-data').textContent);
+  const tree = payload.tree;
+  const computed = payload.computed;
+  const nodes = tree.nodes;
+  const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+  const areaById = Object.fromEntries(tree.areas.map(a => [a.id, a]));
+  const statusById = Object.fromEntries(tree.statuses.map(s => [s.id, s]));
+  const statusOrder = tree.statuses.map(s => s.id);
+  const areaOrder = tree.areas.map(a => a.id);
+  const dependents = computed.dependents;
+  const depth = computed.depth;
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const sColor = id => `var(--s-${id})`;
+  const glyph = id => statusById[id].glyph;
+
+  // ---------- state ----------
+  const state = { statusOn: new Set(statusOrder), area: null, query: '', selected: null, hover: null };
+
+  // ---------- masthead ----------
+  (function masthead() {
+    const o = computed.overall;
+    document.getElementById('total-pct').textContent = o.exact.toFixed(1);
+    const nonGoal = nodes.filter(n => n.area !== 'goal').length;
+    const latest = (computed.history || [])[0];
+    document.getElementById('meta').innerHTML =
+      (latest
+        ? `<span>Updated <b title="${esc(latest.date)}">${esc(ago(latest.date))}</b></span><span>main <b class="mono">${esc(latest.hash)}</b></span>`
+        : `<span>Graph as of <b>${esc(tree.meta.asOf)}</b></span>`) +
+      `<span><b class="num">${nodes.length}</b> nodes in <b>${tree.areas.length - 1}</b> areas and <b>${nodes.filter(n => n.gate && n.tier > 0).length}</b> gates</span>` +
+      `<span><b class="num">${computed.frontier.length}</b> ready to start · <b class="num">${computed.blocked.length}</b> blocked · <b class="num">${computed.active.length}</b> active</span>`;
+    // The documents this whole map was derived from, so the source of truth is one click away.
+    const found = (tree.meta.foundations || []).filter(f => f && f.label && /^https:\/\//.test(f.url || ''));
+    if (found.length) {
+      const host = document.getElementById('foundations');
+      host.innerHTML = `<span>Built from</span>` + found.map(f =>
+        `<a href="${esc(f.url)}" target="_blank" rel="noopener"${f.note ? ` title="${esc(f.note)}"` : ''}><b>${esc(f.label)}</b></a>`).join('<span aria-hidden="true">·</span>');
+      host.hidden = false;
+    }
+    const stack = document.getElementById('total-stack');
+    const legend = document.getElementById('total-legend');
+    statusOrder.forEach(sid => {
+      const c = o.counts[sid];
+      if (c) {
+        const i = document.createElement('i');
+        i.style.flex = `${c} 1 0`;
+        i.style.background = sColor(sid);
+        i.title = `${statusById[sid].label}: ${c}`;
+        stack.appendChild(i);
+      }
+      legend.insertAdjacentHTML('beforeend',
+        `<span><span class="sw" style="background:${sColor(sid)}"></span><span class="g">${glyph(sid)}</span>${esc(statusById[sid].label)} <b class="num">${c}</b></span>`);
+    });
+    const line = document.getElementById('artifact-line');
+    const bits = [];
+    if (tree.meta.pagesUrl) bits.push(`Canonical page: <a href="${esc(tree.meta.pagesUrl)}">${esc(tree.meta.pagesUrl)}</a>`);
+    if (tree.meta.artifactUrl) bits.push(`Claude artifact mirror: <a href="${esc(tree.meta.artifactUrl)}">${esc(tree.meta.artifactUrl)}</a> (republish it when convenient; Pages is the truth)`);
+    line.innerHTML = bits.join('. ') + (bits.length ? '.' : '');
+  })();
+
+  // ---------- burn-up ----------
+  (function burnup() {
+    const raw = (computed.burnup && computed.burnup.points) || [];
+    if (!raw.length) return;  // a copy built before its own commit carries no history
+    const pts = raw.map(p => ({ t: Date.parse(p.t), total: p.total, done: p.done, pct: p.pct, hash: p.hash }));
+    const last = pts[pts.length - 1];
+    const num = v => v.toLocaleString('en-GB', { maximumFractionDigits: 1 });
+    const pct = v => v.toFixed(1);
+    const signed = v => (v < 0 ? '−' : '+') + num(Math.abs(v));
+    const stamp = t => new Date(t).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    const day = t => new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+    // The last 24 hours run from the state at that moment: the last change at or before it.
+    const since = Date.now() - 864e5;
+    let then = null;
+    for (const p of pts) { if (p.t <= since) then = p; else break; }
+    const dayLine = document.getElementById('total-day');
+    if (then === last) {
+      dayLine.textContent = 'No changes to the roadmap in the last 24 hours.';
+    } else {
+      const base = then || pts[0];
+      dayLine.innerHTML = `${then ? 'Last 24 hours' : 'Since ' + esc(stamp(base.t))}: <b>${esc(signed(last.done - base.done))}</b> points finished; total scope <b>${esc(signed(last.total - base.total))}</b> points (${esc(pct(base.pct))} → ${esc(pct(last.pct))} %).`;
+    }
+    dayLine.hidden = false;
+
+    document.getElementById('burnup-section').hidden = false;
+    const plot = document.getElementById('burnup-plot');
+    const live = document.getElementById('burnup-live');
+    const tip = document.createElement('div');
+    tip.className = 'burnup-tip';
+    tip.hidden = true;
+    tip.setAttribute('aria-hidden', 'true');
+    let geom = null;
+    let idx = null;
+
+    function niceStep(v) {
+      const p = Math.pow(10, Math.floor(Math.log10(v)));
+      const f = v / p;
+      return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+    }
+
+    function draw() {
+      const W = Math.max(280, Math.round(plot.clientWidth));
+      const narrow = W < 520;
+      const H = narrow ? 200 : 240;
+      const m = { l: 40, r: narrow ? 12 : 132, t: 12, b: 24 };
+      const iw = W - m.l - m.r;
+      const ih = H - m.t - m.b;
+      const t0 = pts[0].t;
+      const t1 = Math.max(last.t, t0 + 1);
+      const x = t => m.l + (t - t0) / (t1 - t0) * iw;
+      const most = Math.max(1, ...pts.map(p => p.total));
+      const step = niceStep(most / 4);
+      const yMax = Math.ceil(most / step) * step;
+      const y = v => m.t + ih - v / yMax * ih;
+      const parts = [];
+      for (let v = 0; v <= yMax; v += step) {
+        parts.push(`<line class="grid" x1="${m.l}" x2="${m.l + iw}" y1="${y(v)}" y2="${y(v)}"/>`,
+          `<text class="tick" x="${m.l - 8}" y="${y(v) + 3.5}" text-anchor="end">${esc(num(v))}</text>`);
+      }
+      // Date labels one day, a few days or a week apart, whichever keeps them about 72px apart.
+      const spanDays = (t1 - t0) / 864e5;
+      const every = [1, 2, 3, 7, 14, 28].find(d => iw * d / spanDays >= 72) || 28;
+      const tick = new Date(t0);
+      tick.setHours(0, 0, 0, 0);
+      for (; tick.getTime() <= t1; tick.setDate(tick.getDate() + every)) {
+        if (tick.getTime() >= t0) parts.push(`<text class="tick" x="${x(tick.getTime())}" y="${H - 6}" text-anchor="middle">${esc(day(tick.getTime()))}</text>`);
+      }
+      // Step lines: the roadmap holds each state until the next change.
+      const path = key => pts.map((p, i) => (i ? `H${x(p.t).toFixed(1)}V${y(p[key]).toFixed(1)}` : `M${x(p.t).toFixed(1)},${y(p[key]).toFixed(1)}`)).join('');
+      const ex = x(last.t);
+      parts.push(`<path class="wash" d="${path('done')}V${y(0)}H${x(t0)}Z"/>`,
+        `<path class="line scope" d="${path('total')}"/>`,
+        `<path class="line done" d="${path('done')}"/>`,
+        `<circle class="dot scope" cx="${ex}" cy="${y(last.total)}" r="4"/>`,
+        `<circle class="dot done" cx="${ex}" cy="${y(last.done)}" r="4"/>`);
+      if (!narrow && y(last.done) - y(last.total) >= 16) {
+        parts.push(`<text class="end" x="${ex + 10}" y="${y(last.total) + 4}"><tspan class="v">${esc(num(last.total))}</tspan> total scope</text>`,
+          `<text class="end" x="${ex + 10}" y="${y(last.done) + 4}"><tspan class="v">${esc(num(last.done))}</tspan> finished</text>`);
+      }
+      parts.push(`<g class="hover" visibility="hidden"><line class="cross" y1="${m.t}" y2="${m.t + ih}"/><circle class="dot scope" r="4"/><circle class="dot done" r="4"/></g>`);
+      const summary = `Finished ${num(last.done)} of ${num(last.total)} points of total scope, ${pct(last.pct)} %. On ${day(t0)} it was ${num(pts[0].done)} of ${num(pts[0].total)}.`;
+      plot.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(summary)}">${parts.join('')}</svg>`;
+      plot.appendChild(tip);
+      geom = { x, y, W };
+      if (idx !== null) show(idx);
+    }
+
+    // The last change at or before the pointer: that is the state the step lines show there.
+    function at(clientX) {
+      const r = plot.querySelector('svg').getBoundingClientRect();
+      const px = (clientX - r.left) * geom.W / r.width;
+      let lo = 0;
+      let hi = pts.length - 1;
+      while (lo < hi) {
+        const mid = (lo + hi + 1) >> 1;
+        if (geom.x(pts[mid].t) <= px) lo = mid; else hi = mid - 1;
+      }
+      return lo;
+    }
+
+    function row(key, value, label) {
+      const d = document.createElement('div');
+      if (key) {
+        const k = document.createElement('i');
+        k.className = `key ${key}`;
+        d.append(k);
+      }
+      const b = document.createElement('b');
+      b.textContent = value;
+      d.append(b, document.createTextNode(' ' + label));
+      return d;
+    }
+
+    function show(i) {
+      idx = i;
+      const p = pts[i];
+      const cx = geom.x(p.t);
+      const g = plot.querySelector('g.hover');
+      const [cross, scopeDot, doneDot] = g.children;
+      cross.setAttribute('x1', cx);
+      cross.setAttribute('x2', cx);
+      scopeDot.setAttribute('cx', cx);
+      scopeDot.setAttribute('cy', geom.y(p.total));
+      doneDot.setAttribute('cx', cx);
+      doneDot.setAttribute('cy', geom.y(p.done));
+      g.setAttribute('visibility', 'visible');
+      const when = document.createElement('div');
+      when.className = 'when';
+      when.textContent = `${stamp(p.t)} · ${p.hash}`;
+      tip.replaceChildren(when, row('done', num(p.done), 'finished'), row('scope', num(p.total), 'total scope'), row(null, pct(p.pct) + ' %', 'complete'));
+      tip.hidden = false;
+      const scale = plot.querySelector('svg').getBoundingClientRect().width / geom.W;
+      const right = cx * scale + 12;
+      const preferred = right + tip.offsetWidth > plot.clientWidth ? cx * scale - 12 - tip.offsetWidth : right;
+      // On a narrow chart neither side has room, so keep the readout inside the chart.
+      tip.style.left = `${Math.max(0, Math.min(plot.clientWidth - tip.offsetWidth, preferred))}px`;
+    }
+
+    function hide() {
+      idx = null;
+      tip.hidden = true;
+      const g = plot.querySelector('g.hover');
+      if (g) g.setAttribute('visibility', 'hidden');
+    }
+
+    plot.addEventListener('pointermove', e => show(at(e.clientX)));
+    plot.addEventListener('pointerleave', () => { if (document.activeElement !== plot) hide(); });
+    plot.addEventListener('focus', () => show(pts.length - 1));
+    plot.addEventListener('blur', hide);
+    plot.addEventListener('keydown', e => {
+      const moves = { ArrowLeft: -1, ArrowRight: 1, PageUp: -10, PageDown: 10 };
+      let i = idx === null ? pts.length - 1 : idx;
+      if (e.key in moves) i = Math.min(pts.length - 1, Math.max(0, i + moves[e.key]));
+      else if (e.key === 'Home') i = 0;
+      else if (e.key === 'End') i = pts.length - 1;
+      else if (e.key === 'Escape') { hide(); return; }
+      else return;
+      e.preventDefault();
+      show(i);
+      live.textContent = `${stamp(pts[i].t)}: ${num(pts[i].done)} finished of ${num(pts[i].total)} total scope, ${pct(pts[i].pct)} % complete.`;
+    });
+    let frame = 0;
+    window.addEventListener('resize', () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(draw); });
+    draw();
+
+    // The table twin: the last change of each day, newest first.
+    const byDay = new Map();
+    pts.forEach(p => byDay.set(new Date(p.t).toDateString(), p));
+    const rows = document.getElementById('burnup-rows');
+    [...byDay.values()].reverse().forEach(p => {
+      const tr = document.createElement('tr');
+      [new Date(p.t).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }), num(p.total), num(p.done), pct(p.pct) + ' %'].forEach((v, k) => {
+        const td = document.createElement('td');
+        td.textContent = v;
+        if (k) td.className = 'num';
+        tr.append(td);
+      });
+      rows.append(tr);
+    });
+  })();
+
+  // ---------- update log ----------
+  function ago(iso) {
+    const t = Date.parse(iso);
+    if (Number.isNaN(t)) return iso;
+    const s = Math.max(0, Math.round((Date.now() - t) / 1000));
+    const units = [[60, 'second'], [60, 'minute'], [24, 'hour'], [7, 'day'], [4.345, 'week'], [12, 'month'], [Infinity, 'year']];
+    let v = s, i = 0;
+    while (i < units.length - 1 && v >= units[i][0]) { v = v / units[i][0]; i++; }
+    const n = Math.floor(v), unit = units[i][1];
+    if (i === 0 && n < 45) return 'just now';
+    return `${n} ${unit}${n === 1 ? '' : 's'} ago`;
+  }
+  function chevron() {
+    return '<svg class="chev" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  function changeRow(c) {
+    const kindWord = { status: 'moved', added: 'new', claimed: 'claim', released: 'free', blocker: 'block', removed: 'gone', evidence: 'proof', edited: 'edit', meta: 'meta' }[c.kind] || c.kind;
+    let detail = esc(c.text);
+    if (c.kind === 'status') {
+      const m = /^(\S+) → (\S+)$/.exec(c.text);
+      if (m && statusById[m[1]] && statusById[m[2]]) {
+        detail = `<span class="from">${esc(statusById[m[1]].label)}</span> → <span class="sw" style="background:${sColor(m[2])}"></span>${esc(statusById[m[2]].label)}`;
+      }
+    } else if (c.kind === 'added') {
+      const m = /^added as (\S+)$/.exec(c.text);
+      if (m && statusById[m[1]]) detail = `added as <span class="sw" style="background:${sColor(m[1])}"></span>${esc(statusById[m[1]].label)}`;
+    }
+    const node = byId[c.id];
+    const code = node ? `<span class="mono" style="color:var(--ink-3)">${esc(areaById[node.area].code)}</span> ` : '';
+    return `<div class="row"><span class="k">${esc(kindWord)}</span><span>${code}<span class="t">${esc(c.title)}</span> <span class="d">${detail}</span></span></div>`;
+  }
+  (function updates() {
+    const host = document.getElementById('updates');
+    const count = document.getElementById('updates-count');
+    const hist = computed.history || [];
+    if (!hist.length) {
+      count.textContent = computed.historyRef ? 'no changes recorded' : 'added when published';
+      host.innerHTML = `<p class="empty">The update log is computed from git when the page is published to ${tree.meta.pagesUrl ? `<a href="${esc(tree.meta.pagesUrl)}">${esc(tree.meta.pagesUrl)}</a>` : 'GitHub Pages'}. This copy was built before its own commit, so it carries none.</p>`;
+      return;
+    }
+    count.textContent = `${hist.length} change${hist.length === 1 ? '' : 's'} to the graph on main${hist.length >= 20 ? ' (latest 20)' : ''}`;
+    host.innerHTML = hist.map((u, i) => {
+      const who = u.agents.length ? u.agents.join(', ') : u.author;
+      const refs = [
+        u.pr ? `<a href="https://github.com/OlliePage/wish-grid/pull/${u.pr}">PR #${u.pr}</a>` : '',
+        `<span title="${esc(u.fullHash)}">${esc(u.hash)}</span>`,
+        u.sessions.length ? u.sessions.map((s, k) => `<a href="${esc(s)}">session${u.sessions.length > 1 ? ' ' + (k + 1) : ''} ↗</a>`).join(' ') : '',
+      ].filter(Boolean).join('');
+      const body = u.changes.length
+        ? u.changes.map(changeRow).join('')
+        : '<p class="none">The graph file changed without any node moving (formatting or notes).</p>';
+      const metaRow = `<div class="meta-row"><span>${esc(u.title)}</span><span>${u.commits} commit${u.commits === 1 ? '' : 's'}</span><span>by ${esc(u.author)}</span><span title="${esc(u.date)}">${esc(new Date(u.date).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }))}</span>${u.percentFrom !== null && u.percentTo !== null ? `<span>completion ${u.percentFrom.toFixed(1)} → ${u.percentTo.toFixed(1)} %</span>` : ''}</div>`;
+      return `<details class="update${i === 0 ? ' latest' : ''}">
+        <summary>${chevron()}
+          <span class="who"><b>${esc(who)}</b> <span class="ago" title="${esc(u.date)}">${esc(ago(u.date))}</span>${u.branch ? ` <span class="ago">on <span class="mono">${esc(u.branch)}</span></span>` : ''}</span>
+          <span class="what"><span class="sum">${esc(u.summary)}</span><span>${esc(u.title)}</span></span>
+          <span class="refs">${refs}</span>
+        </summary>
+        <div class="body">${body}${metaRow}</div>
+      </details>`;
+    }).join('');
+  })();
+
+  // ---------- area tiles ----------
+  function nextForArea(aid) {
+    const f = computed.frontier.map(id => byId[id]).filter(n => n.area === aid);
+    if (f.length) return { k: 'Next', t: f[0].title };
+    const b = nodes.filter(n => n.area === aid && n.status === 'blocked');
+    if (b.length) return { k: 'Blocked', t: b[0].blocker };
+    const a = nodes.filter(n => n.area === aid && n.status === 'active');
+    if (a.length) return { k: 'Active', t: a[0].title };
+    const d = nodes.filter(n => n.area === aid && (n.status === 'designed' || n.status === 'open'));
+    if (d.length) return { k: 'Waiting', t: d[0].title + ' (needs upstream)' };
+    return { k: 'Done', t: 'Nothing left in this lane' };
+  }
+  (function tiles() {
+    const host = document.getElementById('areas');
+    tree.areas.forEach(a => {
+      const c = computed.areas[a.id];
+      const ids = nodes.filter(n => n.area === a.id);
+      const built = c.counts.live + c.counts.merged + c.counts.branch;
+      const total = ids.filter(n => n.status !== 'out').length;
+      const r = 24, C = 2 * Math.PI * r;
+      const isGoal = a.id === 'goal';
+      const gates = ids.filter(n => n.gate && n.tier > 0);
+      const pct = isGoal ? Math.round(100 * gates.filter(n => n.status === 'live').length / Math.max(1, gates.length)) : c.percent;
+      const nx = nextForArea(a.id);
+      const stackHtml = statusOrder.filter(s => c.counts[s]).map(s => `<i style="flex:${c.counts[s]} 1 0;background:${sColor(s)}" title="${esc(statusById[s].label)}: ${c.counts[s]}"></i>`).join('');
+      const countsHtml = isGoal
+        ? `<span><b class="num">${gates.filter(n => n.status === 'live').length}</b> of <b class="num">${gates.length}</b> gates true</span><span>${c.counts.blocked ? `<b class="num">${c.counts.blocked}</b> blocked` : ''}</span>`
+        : `<span><b class="num">${built}</b> of <b class="num">${total}</b> built</span><span>${c.counts.blocked ? `<b class="num">${c.counts.blocked}</b> blocked` : (c.counts.active ? `<b class="num">${c.counts.active}</b> active` : '')}</span>`;
+      const tile = document.createElement('button');
+      tile.type = 'button';
+      tile.className = 'tile' + (isGoal ? ' goal' : '');
+      tile.dataset.area = a.id;
+      tile.innerHTML =
+        `<div><div class="code">${esc(a.code)}</div><h3>${esc(a.name)}</h3><p class="mission">${esc(a.mission)}</p></div>` +
+        `<div class="ring" aria-label="${pct} percent complete"><svg viewBox="0 0 62 62" role="img"><circle cx="31" cy="31" r="${r}" fill="none" stroke="var(--rule)" stroke-width="5"/><circle cx="31" cy="31" r="${r}" fill="none" stroke="${isGoal ? 'var(--gold)' : 'var(--gold)'}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(pct / 100 * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 31 31)"/><text x="31" y="35.5" text-anchor="middle" class="num">${pct}</text></svg></div>` +
+        `<div class="foot"><div class="stack thin">${stackHtml}</div><div class="counts">${countsHtml}</div><div class="next"><span class="k">${esc(nx.k)}:</span><span class="t" title="${esc(nx.t)}">${esc(nx.t)}</span></div></div>`;
+      tile.addEventListener('click', () => {
+        state.area = state.area === a.id ? null : a.id;
+        applyFilters();
+        document.getElementById('tree-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      host.appendChild(tile);
+    });
+  })();
+
+  // ---------- controls ----------
+  (function controls() {
+    const host = document.getElementById('controls');
+    statusOrder.forEach(sid => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.dataset.status = sid;
+      b.innerHTML = `<span class="sw" style="background:${sColor(sid)}"></span><b>${esc(statusById[sid].label)}</b> <span class="num">${computed.overall.counts[sid] + (tree.areas.find(a => a.id === 'goal') ? nodes.filter(n => n.area === 'goal' && n.status === sid).length : 0)}</span>`;
+      b.setAttribute('aria-pressed', 'true');
+      b.addEventListener('click', () => {
+        if (state.statusOn.has(sid)) state.statusOn.delete(sid); else state.statusOn.add(sid);
+        b.classList.toggle('off', !state.statusOn.has(sid));
+        b.setAttribute('aria-pressed', String(state.statusOn.has(sid)));
+        applyFilters();
+      });
+      host.appendChild(b);
+    });
+    const search = document.createElement('input');
+    search.type = 'search';
+    search.placeholder = 'Search nodes, ids, branches…';
+    search.setAttribute('aria-label', 'Search nodes');
+    search.addEventListener('input', () => { state.query = search.value.trim().toLowerCase(); applyFilters(); });
+    host.appendChild(search);
+    const note = document.createElement('span');
+    note.className = 'filter-note';
+    note.id = 'filter-note';
+    host.appendChild(note);
+    const sp = document.createElement('span'); sp.className = 'spacer'; host.appendChild(sp);
+    const reset = document.createElement('button');
+    reset.type = 'button'; reset.className = 'btn'; reset.textContent = 'Reset view';
+    reset.addEventListener('click', () => {
+      state.statusOn = new Set(statusOrder); state.area = null; state.query = ''; search.value = '';
+      host.querySelectorAll('.chip').forEach(c => { c.classList.remove('off'); c.setAttribute('aria-pressed', 'true'); });
+      select(null); applyFilters();
+    });
+    host.appendChild(reset);
+  })();
+
+  // ---------- tree layout ----------
+  const NODE_W = 188, NODE_H = 54, COL_PITCH = 236, ROW_GAP = 10, LANE_PAD = 14, LEFT = 18, HEAD_H = 30;
+  const layout = { pos: {}, lanes: [], width: 0, height: 0 };
+  (function computeLayout() {
+    let y = HEAD_H;
+    layout.width = LEFT + (computed.maxDepth + 1) * COL_PITCH + 24;
+    areaOrder.forEach((aid, li) => {
+      const laneNodes = nodes.filter(n => n.area === aid);
+      const cols = {};
+      laneNodes.forEach(n => { (cols[depth[n.id]] ||= []).push(n); });
+      const rows = Math.max(1, ...Object.values(cols).map(c => c.length));
+      const h = LANE_PAD * 2 + rows * NODE_H + (rows - 1) * ROW_GAP;
+      Object.entries(cols).forEach(([d, list]) => {
+        list.forEach((n, k) => {
+          layout.pos[n.id] = { x: LEFT + Number(d) * COL_PITCH, y: y + LANE_PAD + k * (NODE_H + ROW_GAP) };
+        });
+      });
+      layout.lanes.push({ area: aid, y, h, alt: li % 2 === 1 });
+      y += h;
+    });
+    layout.height = y;
+  })();
+
+  function wrapTitle(t, max = 25) {
+    const words = t.split(' ');
+    const lines = [];
+    let cur = '';
+    for (const w of words) {
+      if ((cur + ' ' + w).trim().length > max && cur) { lines.push(cur); cur = w; } else { cur = (cur + ' ' + w).trim(); }
+    }
+    if (cur) lines.push(cur);
+    if (lines.length > 2) { lines.length = 2; lines[1] = lines[1].replace(/\s*\S*$/, '') + '…'; }
+    return lines;
+  }
+
+  (function drawTree() {
+    const lanesHost = document.getElementById('lanes');
+    layout.lanes.forEach(l => {
+      const a = areaById[l.area];
+      const c = computed.areas[l.area];
+      const el = document.createElement('div');
+      el.className = 'lane-label' + (l.area === 'goal' ? ' goal' : '');
+      el.style.height = l.h + 'px';
+      el.innerHTML = `<span class="code">${esc(a.code)}</span><span class="name">${esc(a.name)}</span><span class="pct num">${l.area === 'goal' ? nodes.filter(n => n.gate && n.tier > 0 && n.status === 'live').length + ' / ' + nodes.filter(n => n.gate && n.tier > 0).length + ' gates' : c.percent + ' %'}</span>`;
+      el.addEventListener('click', () => { state.area = state.area === l.area ? null : l.area; applyFilters(); });
+      lanesHost.appendChild(el);
+    });
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('width', layout.width);
+    svg.setAttribute('height', layout.height);
+    svg.setAttribute('viewBox', `0 0 ${layout.width} ${layout.height}`);
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'Dependency tree of every node, by area lane and prerequisite depth');
+    const mk = (tag, attrs, parent) => {
+      const el = document.createElementNS(svgNS, tag);
+      for (const k in attrs) el.setAttribute(k, attrs[k]);
+      (parent || svg).appendChild(el);
+      return el;
+    };
+    // lane bands
+    layout.lanes.forEach(l => {
+      mk('rect', { x: 0, y: l.y, width: layout.width, height: l.h, class: 'lane-band' + (l.alt ? ' alt' : '') });
+      mk('line', { x1: 0, x2: layout.width, y1: l.y + l.h - 0.5, y2: l.y + l.h - 0.5, class: 'lane-rule' });
+    });
+    // column labels
+    for (let d = 0; d <= computed.maxDepth; d++) {
+      const t = mk('text', { x: LEFT + d * COL_PITCH + 2, y: 19, class: 'col-label' });
+      t.textContent = d === 0 ? 'FOUNDATIONS' : d === computed.maxDepth ? 'GOAL' : `LAYER ${d}`;
+    }
+    mk('line', { x1: 0, x2: layout.width, y1: HEAD_H - 0.5, y2: HEAD_H - 0.5, class: 'lane-rule' });
+    // edges
+    const edgesG = mk('g', { id: 'edges' });
+    const edgeEls = [];
+    nodes.forEach(n => {
+      n.depends.forEach(dep => {
+        const a = layout.pos[dep], b = layout.pos[n.id];
+        if (!a || !b) return;
+        const x1 = a.x + NODE_W, y1 = a.y + NODE_H / 2, x2 = b.x, y2 = b.y + NODE_H / 2;
+        const dx = Math.max(36, (x2 - x1) / 2);
+        const p = mk('path', { d: `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`, class: 'edge' }, edgesG);
+        p.dataset.from = dep; p.dataset.to = n.id;
+        edgeEls.push(p);
+      });
+    });
+    // nodes
+    const nodesG = mk('g', { id: 'nodes' });
+    const nodeEls = {};
+    nodes.forEach(n => {
+      const p = layout.pos[n.id];
+      const g = mk('g', { class: 'node' + (n.gate ? ' gate' : '') + (n.status === 'out' ? ' out' : ''), transform: `translate(${p.x},${p.y})`, tabindex: 0, role: 'button' }, nodesG);
+      g.dataset.id = n.id;
+      g.setAttribute('aria-label', `${n.title}, ${statusById[n.status].label}`);
+      const stroke = n.gate ? 'var(--gold)' : sColor(n.status);
+      const fill = n.gate ? 'color-mix(in oklab, var(--gold-fill) 12%, var(--surface))' : `color-mix(in oklab, ${sColor(n.status)} ${n.status === 'out' ? 4 : 9}%, var(--surface))`;
+      mk('rect', { x: 0.5, y: 0.5, width: NODE_W - 1, height: NODE_H - 1, rx: 6, class: 'box', stroke, style: `fill:${fill}` }, g);
+      mk('path', { d: `M0.5,6.5 a6,6 0 0 1 6,-6 h0 v${NODE_H - 1} h0 a6,6 0 0 1 -6,-6 z`, style: `fill:${n.gate ? 'var(--gold)' : sColor(n.status)}`, class: 'stripe' }, g);
+      const gl = mk('text', { x: 13, y: 15, class: 'glyph', style: `fill:${n.gate ? 'var(--gold)' : sColor(n.status)}` }, g);
+      gl.textContent = glyph(n.status);
+      const st = mk('text', { x: 26, y: 15, class: 'status' }, g);
+      st.textContent = (n.gate ? `GATE ${n.tier ? 'T' + n.tier : ''} · ` : '') + statusById[n.status].label.toUpperCase() + ` · ${n.size}`;
+      const lines = wrapTitle(n.title);
+      lines.forEach((ln, i) => { const t = mk('text', { x: 13, y: 31 + i * 14, class: 'title' }, g); t.textContent = ln; });
+      const title = mk('title', {}, g); title.textContent = `${n.title} — ${statusById[n.status].label}`;
+      g.addEventListener('click', e => { e.stopPropagation(); select(state.selected === n.id ? null : n.id); });
+      g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(n.id); } });
+      g.addEventListener('mouseenter', () => { state.hover = n.id; paint(); });
+      g.addEventListener('mouseleave', () => { state.hover = null; paint(); });
+      nodeEls[n.id] = g;
+    });
+    svg.addEventListener('click', () => select(null));
+    document.getElementById('scroll').appendChild(svg);
+    layout.nodeEls = nodeEls; layout.edgeEls = edgeEls;
+  })();
+
+  // ---------- highlight & filters ----------
+  function ancestors(id, acc = new Set()) { byId[id].depends.forEach(d => { if (!acc.has(d)) { acc.add(d); ancestors(d, acc); } }); return acc; }
+  function descendants(id, acc = new Set()) { (dependents[id] || []).forEach(d => { if (!acc.has(d)) { acc.add(d); descendants(d, acc); } }); return acc; }
+
+  function matches(n) {
+    if (!state.statusOn.has(n.status)) return false;
+    if (state.area && n.area !== state.area && n.area !== 'goal') return false;
+    if (state.query) {
+      const hay = `${n.id} ${n.title} ${n.summary} ${n.branch || ''} ${n.blocker || ''} ${n.session || ''} ${areaById[n.area].name}`.toLowerCase();
+      if (!hay.includes(state.query)) return false;
+    }
+    return true;
+  }
+
+  function paint() {
+    const focus = state.hover || state.selected;
+    let up = null, down = null;
+    if (focus) { up = ancestors(focus); down = descendants(focus); }
+    const visible = new Set(nodes.filter(matches).map(n => n.id));
+    nodes.forEach(n => {
+      const el = layout.nodeEls[n.id];
+      const inFocus = !focus || focus === n.id || up.has(n.id) || down.has(n.id);
+      el.classList.toggle('dim', !visible.has(n.id) || !inFocus);
+      el.classList.toggle('sel', state.selected === n.id);
+    });
+    layout.edgeEls.forEach(p => {
+      const f = p.dataset.from, t = p.dataset.to;
+      p.classList.remove('up', 'down', 'dim');
+      if (!visible.has(f) || !visible.has(t)) { p.classList.add('dim'); return; }
+      if (!focus) return;
+      const isUp = (t === focus || up.has(t)) && (up.has(f));
+      const isDown = (f === focus || down.has(f)) && down.has(t);
+      if (isUp) p.classList.add('up'); else if (isDown) p.classList.add('down'); else p.classList.add('dim');
+    });
+  }
+
+  function applyFilters() {
+    document.querySelectorAll('.tile').forEach(t => t.classList.toggle('is-filter', t.dataset.area === state.area));
+    const shown = nodes.filter(matches).length;
+    const note = document.getElementById('filter-note');
+    const bits = [];
+    if (state.area) bits.push(`lane ${areaById[state.area].code}`);
+    if (state.statusOn.size !== statusOrder.length) bits.push(`${state.statusOn.size} of ${statusOrder.length} statuses`);
+    if (state.query) bits.push(`“${state.query}”`);
+    note.textContent = bits.length ? `${shown} of ${nodes.length} nodes · ${bits.join(' · ')}` : '';
+    paint();
+  }
+
+  // ---------- drawer ----------
+  const drawer = document.getElementById('drawer');
+  function linkList(ids) {
+    if (!ids.length) return '<span class="none">None</span>';
+    return ids.map(id => byId[id]).sort((a, b) => areaOrder.indexOf(a.area) - areaOrder.indexOf(b.area)).map(n =>
+      `<button type="button" data-go="${esc(n.id)}"><span class="g" style="color:${sColor(n.status)}">${glyph(n.status)}</span><span><span class="mono" style="color:var(--ink-3)">${esc(areaById[n.area].code)}</span> ${esc(n.title)}</span></button>`).join('');
+  }
+  function select(id) {
+    state.selected = id;
+    if (!id) { drawer.classList.remove('open'); paint(); return; }
+    const n = byId[id];
+    const a = areaById[n.area];
+    drawer.innerHTML =
+      `<div class="top"><div class="eyebrow">${esc(a.code)} · ${esc(a.name)} · <span class="mono">${esc(n.id)}</span></div><button type="button" class="close" aria-label="Close">×</button></div>` +
+      `<h2>${esc(n.title)}</h2>` +
+      `<div class="pills"><span class="pill"><span class="sw" style="background:${sColor(n.status)}"></span>${glyph(n.status)} ${esc(statusById[n.status].label)}</span><span class="pill">size ${esc(n.size)}</span>${n.gate ? `<span class="pill" style="border-color:var(--gold);color:var(--gold)">gate · tier ${n.tier || '—'}</span>` : ''}${n.branch ? `<span class="pill">${esc(n.branch)}</span>` : ''}</div>` +
+      `<p class="summary">${esc(n.summary)}</p>` +
+      (n.goalExemption ? `<div class="callout"><b>Outside the road to Version 1:</b> ${esc(n.goalExemption)}</div>` : '') +
+      (n.blocker ? `<div class="callout block"><b>Blocked by:</b> ${esc(n.blocker)}</div>` : '') +
+      (n.session ? `<div class="callout session"><b>Being worked:</b> ${esc(n.session)}</div>` : '') +
+      (n.pauseReason ? `<div class="callout"><b>Paused:</b> ${esc(n.pauseReason)}</div>` : '') +
+      `<h4>Needs first (${n.depends.length})</h4><div class="linklist">${linkList(n.depends)}</div>` +
+      `<h4>Unlocks (${(dependents[n.id] || []).length})</h4><div class="linklist">${linkList(dependents[n.id] || [])}</div>` +
+      `<h4>Evidence</h4><div class="evidence">${n.evidence.length ? n.evidence.map(e => /^https?:/.test(e) ? `<a href="${esc(e)}">${esc(e)}</a>` : `<span>${esc(e)}</span>`).join('') : '<span class="none">None recorded yet</span>'}</div>` +
+      `<div class="foot"><span>Updated ${esc(n.updated)}</span><span>Layer ${depth[n.id]}</span><span>${esc(statusById[n.status].meaning)}</span></div>` +
+      `<div class="edit">To change this node, edit its entry (<code>"id": "${esc(n.id)}"</code>) in <code>docs/roadmap/tech-tree.json</code>, rebuild, republish.</div>`;
+    drawer.classList.add('open');
+    drawer.querySelector('.close').addEventListener('click', () => select(null));
+    drawer.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => { select(b.dataset.go); scrollTo(b.dataset.go); }));
+    paint();
+  }
+  function scrollTo(id) {
+    const p = layout.pos[id];
+    const sc = document.getElementById('scroll');
+    if (p) sc.scrollTo({ left: Math.max(0, p.x - sc.clientWidth / 2 + NODE_W / 2), behavior: 'smooth' });
+    document.getElementById('tree-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') select(null); });
+
+  // ---------- now panels ----------
+  function itemHtml(n, extra) {
+    return `<button type="button" class="item" data-go="${esc(n.id)}"><span class="code">${esc(areaById[n.area].code)}</span><span><span class="t">${esc(n.title)}</span><span class="pill"><span class="sw" style="background:${sColor(n.status)}"></span>${esc(statusById[n.status].label)} · ${esc(n.size)}</span></span><span class="s">${esc(extra)}</span></button>`;
+  }
+  (function nowPanels() {
+    const act = computed.active.map(id => byId[id]);
+    const claims = {};
+    act.forEach(n => { (claims[(n.session || '').split(' — ')[0]] ||= []).push(n); });
+    const pa = document.getElementById('panel-active');
+    pa.innerHTML = `<h3>Being worked now <span class="n num">${act.length}</span></h3><p class="lead">${act.length} deliverables across ${Object.keys(claims).length} branches. Claims count work, not agents; one session may coordinate several branches.</p>` +
+      (act.length ? Object.entries(claims).map(([branch, list]) => `<div class="group-h">${esc(branch)}</div>` + list.map(n => itemHtml(n, n.session || '')).join('')).join('') : '<p class="lead">Nothing is claimed.</p>');
+
+    const paused = tree.nodes.filter(n => n.status === 'paused');
+    document.getElementById('panel-paused').innerHTML = `<h3>Paused work <span class="n num">${paused.length}</span></h3><p class="lead">Partial work remains on its branch. Resume and finish these existing items before opening another workstream.</p>` +
+      (paused.length ? paused.map(n => itemHtml(n, `${n.branch}: ${n.pauseReason}`)).join('') : '<p class="lead">No paused work.</p>');
+
+    const bl = computed.blocked.map(id => byId[id]);
+    const groups = {};
+    bl.forEach(n => { (groups[n.blocker] ||= []).push(n); });
+    const pb = document.getElementById('panel-blocked');
+    pb.innerHTML = `<h3>Waiting on an action <span class="n num">${bl.length}</span></h3><p class="lead">Each blocker names the missing decision, prerequisite or operator action.</p>` +
+      Object.entries(groups).map(([k, list]) => `<div class="group-h">${esc(k)}</div>` + list.map(n => itemHtml(n, `Unlocks ${(dependents[n.id] || []).length} downstream node${(dependents[n.id] || []).length === 1 ? '' : 's'}.`)).join('')).join('');
+
+    const fr = computed.frontier.map(id => byId[id]).sort((a, b) => areaOrder.indexOf(a.area) - areaOrder.indexOf(b.area) || (a.status === 'designed' ? -1 : 1) - (b.status === 'designed' ? -1 : 1));
+    const pf = document.getElementById('panel-frontier');
+    pf.innerHTML = `<h3>Ready to start <span class="n num">${fr.length}</span></h3><p class="lead">Everything beneath these already exists on main or a branch. Designed ones have a plan; open ones need a design first.</p>` +
+      fr.map(n => itemHtml(n, n.status === 'designed' ? 'Design exists; ready to plan and build.' : 'No design yet; start with a spec.')).join('');
+
+    document.querySelectorAll('.item[data-go]').forEach(b => b.addEventListener('click', () => { select(b.dataset.go); scrollTo(b.dataset.go); }));
+  })();
+
+  // ---------- status table ----------
+  (function statusTable() {
+    const host = document.getElementById('status-table');
+    tree.statuses.forEach(s => {
+      host.insertAdjacentHTML('beforeend', `<span class="sw" style="background:${sColor(s.id)}"></span><span class="l">${esc(s.glyph)} ${esc(s.label)}</span><span class="m">${esc(s.meaning)}</span><span class="p num">${s.progress === null ? 'excluded' : Math.round(s.progress * 100) + ' %'}</span>`);
+    });
+  })();
+
+  applyFilters();
+})();
+</script>
+</body>
+</html>
